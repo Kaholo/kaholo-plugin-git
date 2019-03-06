@@ -1,119 +1,116 @@
-var git = require ("simple-git");
+var exec = require('child_process').exec;
+var Docker = require('dockerode');
+var docker = new Docker();
 
-function clone(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
-		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
-		git()
-			.outputHandler(function(command, stdout, stderr){
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
-
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.silent(true)
-			.clone(remote, folder, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-			})
-	})
-
+function build(action) {
+    return new Promise((resolve,reject) => {
+        let path = action.params.PATH;
+        let tag = {
+            t: action.params.TAG,
+        };
+        docker.buildImage(path, tag).then(stream=>{
+            docker.modem.followProgress(stream, (err, res) => {
+                if (err) return reject(err);
+                let cmdOutput = "";
+                res.forEach(result=>{
+                    cmdOutput += result.stream;
+                });
+                resolve({output : cmdOutput})
+            });
+        });
+    })
 }
-
-function checkOutBranch(action) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let branch = action.params.BRANCH;
-		let folder = action.params.FOLDER;
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
-
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.checkout(branch, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-		})
-	})
-
-}
-
 
 function pull(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
-		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
+    return new Promise((resolve,reject) => {
+        let auth = {
+            username: action.params.USER,
+            password: settings.PASSWORD
+        };
+        let repo = action.params.REPO;
+        let tag = action.params.TAG;
+        let URL = action.params.URL;
+        if (URL) {
+            var options = URL + "/" + auth.username + "/" + repo + ":" + tag
+        } else {
+            var options = auth.username + "/" + repo + ":" + tag
+        }
+        docker.pull(options, {authconfig: auth}).then(stream=>{
+            docker.modem.followProgress(stream, (err, res) => {
+            if (err) return reject(err);
+            let cmdOutput = "";
+            res.forEach(result=>{
+                cmdOutput += result.status;
+                });
+            resolve({output: cmdOutput})
+            })
+        })
+    })
+}
 
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.pull(remote, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-		})
-	})
+function push(action, settings) {
+    return new Promise((resolve, reject) => {
+        let auth = {
+            username: action.params.USER,
+            password: settings.PASSWORD
+        };
+        let imageTag = action.params.IMAGETAG;
+        let imageRepo = action.params.IMAGE;
+        let repo = action.params.REPO;
+        let URL = action.params.URL;
+        if (URL) {
+            var options = URL + "/" + auth.username + "/" + repo + ":" + imageTag;
+        } else {
+            var options = auth.username + "/" + repo + ":" + imageTag;
+        }
+        let image = docker.getImage(imageRepo + ":" + imageTag);
+        image.tag({repo: options}, function () {
+            let newImage = docker.getImage(options);
+            newImage.push({authconfig: auth, registry: auth.username + "/" + repo + ":" + imageTag}).then(stream=>{
+                docker.modem.followProgress(stream, (err, res) => {
+                    if (err) return reject(err);
+                    let cmdOutput = "";
+                    res.forEach(result=>{
+                        cmdOutput += result.status + "\r\n";
+                    });
+                    resolve({output: cmdOutput})
+                })
+            })
+        })
+    })
 }
 
 
-function pushTag(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
-		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
+function tag(action) {
+    return new Promise((resolve, reject) => {
+        let sourceReg = action.params.SOURCEIMAGE;
+        let sourceImageTag = action.params.SOURCEIMAGETAG;
+        let newReg = action.params.NEWIMAGE;
+        let newImageTag = action.params.NEWIMAGETAG;
+        let image = docker.getImage(sourceReg + "/" + sourceImageTag);
+        image.tag({repo: newReg + "/" + newImageTag}, function (err, res) {
+            if (err)
+            return reject(err);
+            resolve(res);
+        },)
+    })
+}
 
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.pushTags(remote, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-			})
-	})
+function cmdExec(action) {
+    return new Promise((resolve,reject) => {
+        let params = action.params.PARAMS;
+        exec("docker " + params, function (err, stdout, stderr) {
+            if (err || stderr)
+                return reject(err);
+            resolve(stdout)
+        });
+    })
 }
 
 module.exports = {
-	clone: clone,
-	checkOutBranch: checkOutBranch,
-	pull: pull,
-	pushTag: pushTag
-
-}
+    build: build,
+    pull: pull,
+    push: push,
+    tag: tag,
+    cmdExec: cmdExec
+};
