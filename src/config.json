@@ -1,17 +1,12 @@
 {
-  "name": "Docker",
+  "name": "Git",
   "type": "executer",
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
   "version": "0.0.1",
-  "description": "Docker utility",
+  "description": "Git plugin",
   "settings":[
-    {
-      "name":"USER",
-      "viewName":"User",
-      "type":"string"
-    },
     {
       "name":"PASSWORD",
       "viewName":"Password",
@@ -20,28 +15,54 @@
   ],
   "methods": [
     {
-      "name": "build",
-      "viewName": "Build docker image",
+      "name": "clone",
+      "viewName": "Clone repo to local folder",
       "params": [
         {
-          "name": "PATH",
-          "viewName": "Path to .tar",
+          "name": "USER",
+          "viewName": "Git user",
           "type": "string"
         },
         {
-          "name": "TAG",
-          "viewName": "Tag",
+          "name": "PASSWORD",
+          "viewName": "Git password",
+          "type": "vault"
+        },
+        {
+          "name": "REPO",
+          "viewName": "Git repo",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local folder",
           "type": "string"
         }
-       ]
+      ]
+    },
+    {
+      "name": "checkOutBranch",
+      "viewName": "Check our branch",
+      "params": [
+        {
+          "name": "BRANCH",
+          "viewName": "Branch",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local folder",
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "pull",
-      "viewName": "Pull Image",
+      "viewName": "Pull repo",
       "params": [
         {
           "name": "USER",
-          "viewName": "Username",
+          "viewName": "User",
           "type": "string"
         },
         {
@@ -51,91 +72,38 @@
         },
         {
           "name": "REPO",
-          "viewName": "Repo name",
+          "viewName": "Repo",
           "type": "string"
         },
         {
-          "name": "TAG",
-          "viewName": "Image tag",
-          "type": "string"
-        },
-        {
-          "name": "URL",
-          "viewName": "Remote registry, otherwise dockerhub",
+          "name": "FOLDER",
+          "viewName": "Local folder",
           "type": "string"
         }
       ]
     },
     {
-      "name": "push",
-      "viewName": "Push to repo",
-      "params": [
-        {
-          "name": "USER",
-          "viewName": "Username",
-          "type": "string"
-        },
-        {
-          "name": "PASSWORD",
-          "viewName": "Password",
-          "type": "vault"
-        },
-        {
-          "name": "IMAGETAG",
-          "viewName": "Tag",
-          "type": "string"
-        },
-        {
-          "name": "IMAGE",
-          "viewName": "Image name",
-          "type": "string"
-        },
-        {
-          "name": "REPO",
-          "viewName": "Repo name",
-          "type": "string"
-        },
-        {
-          "name": "URL",
-          "viewName": "Remote registry, otherwise dockerhub",
-          "type": "string"
-        }
-
-      ]
-    },
-    {
-      "name": "tag",
+      "name": "pushTag",
       "viewName": "Tag image",
       "params": [
         {
-          "name": "SOURCEIMAGE",
-          "viewName": "Source registry",
+          "name": "USER",
+          "viewName": "Git user",
           "type": "string"
         },
         {
-          "name": "SOURCEIMAGETAG",
-          "viewName": "Source image tag",
+          "name": "PASSWORD",
+          "viewName": "Git password",
+          "type": "vault"
+        },
+        {
+          "name": "REPO",
+          "viewName": "Repo",
           "type": "string"
         },
         {
-          "name": "NEWIMAGE",
-          "viewName": "New registry",
-          "type": "string"
-        },
-        {
-          "name": "NEWIMAGETAG",
-          "viewName": "New image tag",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "cmdExec",
-      "viewName": "Docker cmd",
-      "params": [
-        {
-          "name": "PARAMS",
-          "viewName": "Docker options",
+          "name": "FOLDER",
+          "viewName": "Local folder",
           "type": "string"
         }
       ]
