@@ -28,11 +28,6 @@
           "viewName": "Git password",
           "type": "vault"
         },
-		{
-          "name": "URL",
-          "viewName": "Git URL, otherwise github used",
-          "type": "string"
-        },
         {
           "name": "REPO",
           "viewName": "Git repo",
@@ -77,12 +72,7 @@
         },
 		{
           "name": "REPO",
-          "viewName": "Repo",
-          "type": "string"
-        },
-        {
-          "name": "REPO",
-          "viewName": "Repo",
+          "viewName": "Git repo",
           "type": "string"
         },
         {

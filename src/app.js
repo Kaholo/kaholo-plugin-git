@@ -1,4 +1,5 @@
 var git = require ("simple-git");
+var url = require('url');
 
 function clone(action, settings) {
 	return new Promise((resolve,reject) => {
@@ -6,14 +7,16 @@ function clone(action, settings) {
 		let stdOut = '';
 		let user = action.params.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let URL = action.params.URL;
-		if (URL) {
-			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
+		let repo = action.params.REPO;
+		if (repo.match("^(http:\/\/|https:\/\/)")) {
+			var myURL = new URL(repo);
+			let newRepo = myURL.hostname + myURL.pathname;
+			var remote = `https://${user}:${password}@${newRepo}`;
 		} else {
-			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+			var remote = `https://${user}:${password}@${repo}`;
 		}
+
 		git()
 			.outputHandler(function(command, stdout, stderr){
 				stderr.on('data', function (data) {
@@ -66,14 +69,16 @@ function pull(action, settings) {
 		let stdOut = '';
 		let user = action.params.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let URL = action.params.URL;
-		if (URL) {
-			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
+		let repo = action.params.REPO;
+		if (repo.match("^(http:\/\/|https:\/\/)")) {
+			var myURL = new URL(repo);
+			let newRepo = myURL.hostname + myURL.pathname;
+			var remote = `https://${user}:${password}@${newRepo}`;
 		} else {
-			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+			var remote = `https://${user}:${password}@${repo}`;
 		}
+
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
 				stderr.on('data', function (data) {
