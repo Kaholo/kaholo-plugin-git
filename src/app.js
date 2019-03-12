@@ -8,7 +8,12 @@ function clone(action, settings) {
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		let URL = action.params.URL;
+		if (URL) {
+			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
+		} else {
+			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		}
 		git()
 			.outputHandler(function(command, stdout, stderr){
 				stderr.on('data', function (data) {
@@ -63,7 +68,12 @@ function pull(action, settings) {
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		let URL = action.params.URL;
+		if (URL) {
+			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
+		} else {
+			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		}
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
 				stderr.on('data', function (data) {
@@ -91,7 +101,12 @@ function pushTag(action, settings) {
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		let URL = action.params.URL;
+		if (URL) {
+			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
+		} else {
+			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
+		}
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
 				stderr.on('data', function (data) {
