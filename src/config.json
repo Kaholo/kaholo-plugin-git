@@ -1,0 +1,112 @@
+{
+  "name": "Git",
+  "type": "executer",
+  "execProgram": "node",
+  "main": "app.js",
+  "imgUrl": "logo.png",
+  "version": "1.0.0",
+  "description": "Git plugin",
+  "settings":[
+    {
+      "name":"PASSWORD",
+      "viewName":"Password",
+      "type":"vault"
+    }
+  ],
+  "methods": [
+    {
+      "name": "clone",
+      "viewName": "Clone repo",
+      "params": [
+        {
+          "name": "USER",
+          "viewName": "Git user",
+          "type": "string"
+        },
+        {
+          "name": "PASSWORD",
+          "viewName": "Git password",
+          "type": "vault"
+        },
+        {
+          "name": "REPO",
+          "viewName": "Repo URL",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local path",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "checkOutBranch",
+      "viewName": "Check our branch",
+      "params": [
+        {
+          "name": "BRANCH",
+          "viewName": "Branch",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local path",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "pull",
+      "viewName": "Pull repo",
+      "params": [
+        {
+          "name": "USER",
+          "viewName": "User",
+          "type": "string"
+        },
+        {
+          "name": "PASSWORD",
+          "viewName": "Password",
+          "type": "vault"
+        },
+		{
+          "name": "REPO",
+          "viewName": "Repo URL",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local path",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "pushTag",
+      "viewName": "Tag image",
+      "params": [
+        {
+          "name": "USER",
+          "viewName": "Git user",
+          "type": "string"
+        },
+        {
+          "name": "PASSWORD",
+          "viewName": "Git password",
+          "type": "vault"
+        },
+		{
+          "name": "REPO",
+          "viewName": "Repo URL",
+          "type": "string"
+        },
+        {
+          "name": "FOLDER",
+          "viewName": "Local path",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
