@@ -16,7 +16,7 @@
   "methods": [
     {
       "name": "clone",
-      "viewName": "Clone repo to local folder",
+      "viewName": "Clone repo",
       "params": [
         {
           "name": "USER",
@@ -30,12 +30,12 @@
         },
         {
           "name": "REPO",
-          "viewName": "Git repo",
+          "viewName": "Repo URL",
           "type": "string"
         },
         {
           "name": "FOLDER",
-          "viewName": "Local folder",
+          "viewName": "Local path",
           "type": "string"
         }
       ]
@@ -51,7 +51,7 @@
         },
         {
           "name": "FOLDER",
-          "viewName": "Local folder",
+          "viewName": "Local path",
           "type": "string"
         }
       ]
@@ -72,12 +72,12 @@
         },
 		{
           "name": "REPO",
-          "viewName": "Git repo",
+          "viewName": "Repo URL",
           "type": "string"
         },
         {
           "name": "FOLDER",
-          "viewName": "Local folder",
+          "viewName": "Local path",
           "type": "string"
         }
       ]
@@ -98,17 +98,12 @@
         },
 		{
           "name": "REPO",
-          "viewName": "Repo",
-          "type": "string"
-        },
-        {
-          "name": "REPO",
-          "viewName": "Repo",
+          "viewName": "Repo URL",
           "type": "string"
         },
         {
           "name": "FOLDER",
-          "viewName": "Local folder",
+          "viewName": "Local path",
           "type": "string"
         }
       ]

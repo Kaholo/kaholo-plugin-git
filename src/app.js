@@ -1,6 +1,11 @@
 var git = require ("simple-git");
 var url = require('url');
 
+function _getRepoUrl(repoUrl, user, password){
+    let parsedUrl = url.parse(repoUrl);
+    return `${parsedUrl.protocol || 'https:'}//${user}:${password}@${(parsedUrl.hostname || '')}${parsedUrl.pathname}`;
+}
+
 function clone(action, settings) {
 	return new Promise((resolve,reject) => {
 		let stdErr = '';
@@ -9,15 +14,9 @@ function clone(action, settings) {
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let folder = action.params.FOLDER;
 		let repo = action.params.REPO;
-		if (repo.match("^(http:\/\/|https:\/\/)")) {
-			var myURL = new URL(repo);
-			let newRepo = myURL.hostname + myURL.pathname;
-			var remote = `https://${user}:${password}@${newRepo}`;
-		} else {
-			var remote = `https://${user}:${password}@${repo}`;
-		}
-
-		git()
+        let remote = _getRepoUrl(repo,user,password);
+        
+        git()
 			.outputHandler(function(command, stdout, stderr){
 				stderr.on('data', function (data) {
 					stdOut += data.toString();
@@ -70,14 +69,8 @@ function pull(action, settings) {
 		let user = action.params.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let folder = action.params.FOLDER;
-		let repo = action.params.REPO;
-		if (repo.match("^(http:\/\/|https:\/\/)")) {
-			var myURL = new URL(repo);
-			let newRepo = myURL.hostname + myURL.pathname;
-			var remote = `https://${user}:${password}@${newRepo}`;
-		} else {
-			var remote = `https://${user}:${password}@${repo}`;
-		}
+        let repo = action.params.REPO;
+        let remote = _getRepoUrl(repo,user,password);
 
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
@@ -106,12 +99,8 @@ function pushTag(action, settings) {
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-		let URL = action.params.URL;
-		if (URL) {
-			var remote = `https://${user}:${password}@${URL}/${user}/${repo}`;
-		} else {
-			var remote = `https://${user}:${password}@github.com/${user}/${repo}`;
-		}
+        let remote = _getRepoUrl(repo,user,password);
+        
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
 				stderr.on('data', function (data) {
@@ -135,5 +124,4 @@ module.exports = {
 	checkOutBranch: checkOutBranch,
 	pull: pull,
 	pushTag: pushTag
-
 }
