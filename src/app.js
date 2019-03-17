@@ -10,7 +10,7 @@ function clone(action, settings) {
 	return new Promise((resolve,reject) => {
 		let stdErr = '';
 		let stdOut = '';
-		let user = action.params.USER;
+		let user = action.params.USER || settings.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let folder = action.params.FOLDER;
 		let repo = action.params.REPO;
@@ -36,11 +36,11 @@ function clone(action, settings) {
 
 }
 
-function checkOutBranch(action) {
+function checkOut(action) {
 	return new Promise((resolve,reject) => {
 		let stdErr = '';
 		let stdOut = '';
-		let branch = action.params.BRANCH;
+		let checkoutWhat = action.params.BRANCH || action.params.TAG;
 		let folder = action.params.FOLDER;
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
@@ -52,7 +52,7 @@ function checkOutBranch(action) {
 					stdErr += data.toString();
 				});
 			})
-			.checkout(branch, function (err, res) {
+			.checkout(checkoutWhat, function (err, res) {
 				if (err)
 					return reject(err || {output : stdErr});
 				resolve(res || {output : stdOut});
@@ -66,7 +66,7 @@ function pull(action, settings) {
 	return new Promise((resolve,reject) => {
 		let stdErr = '';
 		let stdOut = '';
-		let user = action.params.USER;
+		let user = action.params.USER || settings.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let folder = action.params.FOLDER;
         let repo = action.params.REPO;
@@ -95,11 +95,14 @@ function pushTag(action, settings) {
 	return new Promise((resolve,reject) => {
 		let stdErr = '';
 		let stdOut = '';
-		let user = action.params.USER;
+		let user = action.params.USER || settings.USER;
 		let password = action.params.PASSWORD || settings.PASSWORD;
 		let repo = action.params.REPO;
 		let folder = action.params.FOLDER;
-        let remote = _getRepoUrl(repo,user,password);
+		let tag = action.params.TAG;
+		let message = action.params.MESSAGE;
+		
+		let remote = _getRepoUrl(repo,user,password);
         
 		git(folder)
 			.outputHandler((command, stdout, stderr) => {
@@ -111,6 +114,7 @@ function pushTag(action, settings) {
 					stdErr += data.toString();
 				});
 			})
+			.tag(['-a',tag,'-m',message])
 			.pushTags(remote, function (err, res) {
 				if (err)
 					return reject(err || {output : stdErr});
@@ -121,7 +125,8 @@ function pushTag(action, settings) {
 
 module.exports = {
 	clone: clone,
-	checkOutBranch: checkOutBranch,
-	pull: pull,
+	checkOutBranch: checkOut,
+	checkOutTag: checkOut,
+	// pull: pull,
 	pushTag: pushTag
 }
