@@ -6,11 +6,16 @@
   "imgUrl": "logo.png",
   "version": "1.0.0",
   "description": "Git plugin",
-  "settings":[
+  "settings": [
     {
-      "name":"PASSWORD",
-      "viewName":"Password",
-      "type":"vault"
+      "name": "USER",
+      "viewName": "Username",
+      "type": "vault"
+    },
+    {
+      "name": "PASSWORD",
+      "viewName": "Password",
+      "type": "vault"
     }
   ],
   "methods": [
@@ -20,12 +25,12 @@
       "params": [
         {
           "name": "USER",
-          "viewName": "Git user",
+          "viewName": "User",
           "type": "string"
         },
         {
           "name": "PASSWORD",
-          "viewName": "Git password",
+          "viewName": "Password",
           "type": "vault"
         },
         {
@@ -42,7 +47,7 @@
     },
     {
       "name": "checkOutBranch",
-      "viewName": "Check our branch",
+      "viewName": "Check out branch",
       "params": [
         {
           "name": "BRANCH",
@@ -57,22 +62,12 @@
       ]
     },
     {
-      "name": "pull",
-      "viewName": "Pull repo",
+      "name": "checkOutTag",
+      "viewName": "Check out tag",
       "params": [
         {
-          "name": "USER",
-          "viewName": "User",
-          "type": "string"
-        },
-        {
-          "name": "PASSWORD",
-          "viewName": "Password",
-          "type": "vault"
-        },
-		{
-          "name": "REPO",
-          "viewName": "Repo URL",
+          "name": "TAG",
+          "viewName": "tag",
           "type": "string"
         },
         {
@@ -84,19 +79,29 @@
     },
     {
       "name": "pushTag",
-      "viewName": "Tag image",
+      "viewName": "Tag",
       "params": [
         {
           "name": "USER",
-          "viewName": "Git user",
+          "viewName": "User",
           "type": "string"
         },
         {
           "name": "PASSWORD",
-          "viewName": "Git password",
+          "viewName": "Password",
           "type": "vault"
         },
-		{
+        {
+          "name": "TAG",
+          "viewName": "Tag",
+          "type": "string"
+        },
+        {
+          "name": "MESSAGE",
+          "viewName": "Commit Message",
+          "type": "string"
+        },
+        {
           "name": "REPO",
           "viewName": "Repo URL",
           "type": "string"
