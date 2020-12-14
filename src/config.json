@@ -4,111 +4,33 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Git plugin",
   "settings": [
     {
-      "name": "USER",
-      "viewName": "Username",
-      "type": "vault"
-    },
-    {
-      "name": "PASSWORD",
-      "viewName": "Password",
+      "name": "sshKey",
+      "viewName": "SSH key",
       "type": "vault"
     }
   ],
   "methods": [
     {
-      "name": "clone",
-      "viewName": "Clone repo",
+      "name": "cloneUsingSsh",
+      "viewName": "Clone using SSH",
       "params": [
         {
-          "name": "USER",
-          "viewName": "User",
-          "type": "string"
-        },
-        {
-          "name": "PASSWORD",
-          "viewName": "Password",
+          "name": "sshKey",
+          "viewName": "SSH key",
           "type": "vault"
         },
         {
-          "name": "REPO",
-          "viewName": "Repo URL",
+          "name": "repo",
+          "viewName": "Repo",
           "type": "string"
         },
         {
-          "name": "FOLDER",
-          "viewName": "Local path",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "checkOutBranch",
-      "viewName": "Check out branch",
-      "params": [
-        {
-          "name": "BRANCH",
-          "viewName": "Branch",
-          "type": "string"
-        },
-        {
-          "name": "FOLDER",
-          "viewName": "Local path",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "checkOutTag",
-      "viewName": "Check out tag",
-      "params": [
-        {
-          "name": "TAG",
-          "viewName": "tag",
-          "type": "string"
-        },
-        {
-          "name": "FOLDER",
-          "viewName": "Local path",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "pushTag",
-      "viewName": "Tag",
-      "params": [
-        {
-          "name": "USER",
-          "viewName": "User",
-          "type": "string"
-        },
-        {
-          "name": "PASSWORD",
-          "viewName": "Password",
-          "type": "vault"
-        },
-        {
-          "name": "TAG",
-          "viewName": "Tag",
-          "type": "string"
-        },
-        {
-          "name": "MESSAGE",
-          "viewName": "Commit Message",
-          "type": "string"
-        },
-        {
-          "name": "REPO",
-          "viewName": "Repo URL",
-          "type": "string"
-        },
-        {
-          "name": "FOLDER",
-          "viewName": "Local path",
+          "name": "path",
+          "viewName": "Clone Path",
           "type": "string"
         }
       ]

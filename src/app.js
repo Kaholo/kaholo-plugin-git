@@ -1,132 +1,70 @@
-var git = require ("simple-git");
-var url = require('url');
+const child_process = require("child_process");
+const compareVersion = require('./compare-versions');
+const GitKey = require('./git-key');
 
-function _getRepoUrl(repoUrl, user, password){
-    let parsedUrl = url.parse(repoUrl);
-    return `${parsedUrl.protocol || 'https:'}//${user}:${password}@${(parsedUrl.hostname || '')}${parsedUrl.pathname}`;
+async function verifyGitVersion(){
+  const minimalGitRequired = '2.10.0';
+  let gitVersion;
+  
+  try {
+    const gitResult = await execCommand('git --version');
+    gitVersion = gitResult.replace('git version ','').split(' ')[0].trim();
+  } catch(err){
+    throw `Could not determine git version. error: ${err}`;
+  }
+  
+  const isValidGitVersion = compareVersion.compare(gitVersion,minimalGitRequired,'>=');
+  if (!isValidGitVersion){
+    throw `Git version must be ${minimalGitRequired} or higher, got ${gitVersion}`;
+  }
 }
 
-function clone(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER || settings.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let folder = action.params.FOLDER;
-		let repo = action.params.REPO;
-        let remote = _getRepoUrl(repo,user,password);
-        
-        git()
-			.outputHandler(function(command, stdout, stderr){
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
-
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.silent(true)
-			.clone(remote, folder, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-			})
-	})
-
-}
-
-function checkOut(action) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let checkoutWhat = action.params.BRANCH || action.params.TAG;
-		let folder = action.params.FOLDER;
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
-
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.checkout(checkoutWhat, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-		})
-	})
-
-}
-
-
-function pull(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER || settings.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let folder = action.params.FOLDER;
-        let repo = action.params.REPO;
-        let remote = _getRepoUrl(repo,user,password);
-
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
-
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.pull(remote, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-		})
+async function execCommand(command){
+  return new Promise((resolve,reject) => {
+		child_process.exec(command, (error, stdout, stderr) => {
+			if (error) {
+				console.log(`${stdout}`)
+			   return reject(error);
+			}
+			if (stderr) {
+				console.log(`stderr: ${stderr}`);
+			}
+			return resolve(stdout);
+		});
 	})
 }
 
+async function cloneUsingSsh(action, settings){
+  
+  await verifyGitVersion();
+  
+  // return action.params;
+  const repo = action.params.repo;
+  const clonePath = action.params.path;
+  const privateKey = action.params.sshKey || settings.sshKey;
+  
+  const gitKey = await GitKey.from(privateKey);
 
-function pushTag(action, settings) {
-	return new Promise((resolve,reject) => {
-		let stdErr = '';
-		let stdOut = '';
-		let user = action.params.USER || settings.USER;
-		let password = action.params.PASSWORD || settings.PASSWORD;
-		let repo = action.params.REPO;
-		let folder = action.params.FOLDER;
-		let tag = action.params.TAG;
-		let message = action.params.MESSAGE;
-		
-		let remote = _getRepoUrl(repo,user,password);
-        
-		git(folder)
-			.outputHandler((command, stdout, stderr) => {
-				stderr.on('data', function (data) {
-					stdOut += data.toString();
-				});
+  // clone using key file
+  const sshCommand = `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${gitKey.keyPath}`
+  const cloneCmd = `git clone ${repo} --config core.sshCommand="${sshCommand}" ${clonePath}`
+  
+  // add key to ssh agent
+  await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
+  
+  // run clone
+  const cloneResult = await execCommand(cloneCmd);
 
-				stdout.on('data', function (data) {
-					stdErr += data.toString();
-				});
-			})
-			.tag(['-a',tag,'-m',message])
-			.pushTags(remote, function (err, res) {
-				if (err)
-					return reject(err || {output : stdErr});
-				resolve(res || {output : stdOut});
-			})
-	})
+  try {
+    await gitKey.dispose();
+  } catch (err){
+    //TODO: handler key deletion failure
+  }
+
+  return cloneResult;
 }
+
 
 module.exports = {
-	clone: clone,
-	checkOutBranch: checkOut,
-	checkOutTag: checkOut,
-	// pull: pull,
-	pushTag: pushTag
-}
+  cloneUsingSsh: cloneUsingSsh
+};
