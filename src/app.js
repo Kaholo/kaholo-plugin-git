@@ -68,5 +68,3 @@ async function cloneUsingSsh(action, settings){
 module.exports = {
   cloneUsingSsh: cloneUsingSsh
 };
-
-cloneUsingSsh().then(console.log).catch(console.error);
