@@ -8,7 +8,7 @@ async function verifyGitVersion(){
   
   try {
     const gitResult = await execCommand('git --version');
-    gitVersion = gitResult.replace('git version ','').split(' ')[0].trim();
+    gitVersion = gitResult.replace('git version ','').split(' ')[0].trim().split('.windows')[0];
   } catch(err){
     throw `Could not determine git version. error: ${err}`;
   }
@@ -68,3 +68,5 @@ async function cloneUsingSsh(action, settings){
 module.exports = {
   cloneUsingSsh: cloneUsingSsh
 };
+
+cloneUsingSsh().then(console.log).catch(console.error);
