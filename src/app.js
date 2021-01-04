@@ -1,4 +1,5 @@
 const child_process = require("child_process");
+const os = require('os');
 const compareVersion = require('./compare-versions');
 const GitKey = require('./git-key');
 
@@ -42,15 +43,18 @@ async function cloneUsingSsh(action, settings){
   const repo = action.params.repo;
   const clonePath = action.params.path;
   const privateKey = action.params.sshKey || settings.sshKey;
-  
-  const gitKey = await GitKey.from(privateKey);
+  const isWin = os.platform()=='win32';
 
+  const gitKey = await GitKey.from(privateKey);
+  const keyPathParam = !isWin ? gitKey.keyPath : gitKey.keyPath.replace(/\\/g,'\\\\');
   // clone using key file
-  const sshCommand = `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${gitKey.keyPath}`
-  const cloneCmd = `git clone ${repo} --config core.sshCommand="${sshCommand}" ${clonePath}`
+  const sshCommand = `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyPathParam}`;
+  const cloneCmd = `git clone ${repo} --config core.sshCommand="${sshCommand}" ${clonePath}`;
   
-  // add key to ssh agent
-  await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
+  if (!isWin){
+    // add key to ssh agent
+    await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
+  }
   
   // run clone
   const cloneResult = await execCommand(cloneCmd);
