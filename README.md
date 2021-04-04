@@ -44,9 +44,7 @@ Allowing to use the settings key as the default key when no other key is provide
 This method calls clone a git repository using a SSH key.
 The key can either be supplied in the plugin settings or in the action parameter, while action parameter key will have precedence over the settings key.
 
-
-
 **Parameters**
-1. SSH key - The key to use for the clone
-2. Repo - the full repository ssh uri (i.e. `git@github.com:Kaholo/kaholo-plugin-git.git`)
-3. Clone path - The path to clone the repository to. We recommand using absolute path values.
+1. SSH key (vault) **Optional** - The key to use for the clone. *Required if not provided in settings*
+2. Repo (string) **Required** - the full repository ssh uri (i.e. `git@github.com:Kaholo/kaholo-plugin-git.git`)
+3. Clone path (string) **Required** - The path to clone the repository to. We recommand using absolute path values.
