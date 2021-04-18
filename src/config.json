@@ -4,7 +4,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Git plugin",
   "settings": [
     {
@@ -32,6 +32,11 @@
           "name": "path",
           "viewName": "Clone Path",
           "type": "string"
+        },
+        {
+          "name": "extraArgs",
+          "viewName": "Additional Arguments",
+          "type": "text"
         }
       ]
     }
