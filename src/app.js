@@ -1,74 +1,70 @@
-const child_process = require("child_process");
+const { verifyGitVersion, execCommand, splitByNewLine, getSSHCommand } = require("./helpers");
+const fs = require("fs");
 const os = require('os');
-const compareVersion = require('./compare-versions');
-const GitKey = require('./git-key');
-
-async function verifyGitVersion(){
-  const minimalGitRequired = '2.10.0';
-  let gitVersion;
-  
-  try {
-    const gitResult = await execCommand('git --version');
-    gitVersion = gitResult.replace('git version ','').split(' ')[0].trim().split('.windows')[0];
-  } catch(err){
-    throw `Could not determine git version. error: ${err}`;
-  }
-  
-  const isValidGitVersion = compareVersion.compare(gitVersion,minimalGitRequired,'>=');
-  if (!isValidGitVersion){
-    throw `Git version must be ${minimalGitRequired} or higher, got ${gitVersion}`;
-  }
-}
-
-async function execCommand(command){
-  return new Promise((resolve,reject) => {
-		child_process.exec(command, (error, stdout, stderr) => {
-			if (error) {
-				console.log(`${stdout}`)
-			   return reject(error);
-			}
-			if (stderr) {
-				console.log(`stderr: ${stderr}`);
-			}
-			return resolve(stdout);
-		});
-	})
-}
+const isWin = os.platform()=='win32';
+const homeDir = os.homedir();
+const path = require('path');
 
 async function cloneUsingSsh(action, settings){
-  
+  // delete directory if already exists
+  const clonePath = (action.params.path).trim().replace("~", homeDir);
+  if (fs.existsSync(clonePath)){
+    try{
+      fs.rmdirSync(clonePath, { recursive: true });
+    }
+    catch (err){
+      throw "couldn't delete existing directory: "
+    }
+  }
   await verifyGitVersion();
   
   // return action.params;
-  const repo = action.params.repo;
-  const clonePath = action.params.path;
-  const privateKey = action.params.sshKey || settings.sshKey;
-  const isWin = os.platform()=='win32';
-
-  const gitKey = await GitKey.from(privateKey);
-  const keyPathParam = !isWin ? gitKey.keyPath : gitKey.keyPath.replace(/\\/g,'\\\\');
+  const repo = (action.params.repo).trim();
+  
+  
+  let gitKey = null;
+  const args = ["clone", repo];
+  const privateKey = (action.params.sshKey || settings.sshKey || "").trim();
+  if (privateKey) { // if provided ssh Key
+    const sshRes = await getSSHCommand(privateKey, isWin);
+    gitKey = sshRes[0];
+    args.push(`--config core.sshCommand="${sshRes[1]}"`);
+  }
+  if (action.params.extraArgs) args.push(...splitByNewLine(action.params.extraArgs));
+  args.push(clonePath);
+  
   // clone using key file
-  const sshCommand = `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyPathParam}`;
-  const cloneCmd = `git clone ${repo} --config core.sshCommand="${sshCommand}" ${clonePath}`;
-  
-  if (!isWin){
-    // add key to ssh agent
-    await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
-  }
-  
-  // run clone
-  const cloneResult = await execCommand(cloneCmd);
-
   try {
-    await gitKey.dispose();
-  } catch (err){
-    //TODO: handler key deletion failure
+    const cloneCmd = `git ${args.join(" ")}`;
+  
+    if (!isWin && gitKey){
+      // add key to ssh agent
+      await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
+    }
+    
+    // run clone
+    const cloneResult = await execCommand(cloneCmd);
+    if (privateKey){
+      try {
+        await gitKey.dispose();
+      } catch (err2){
+        //TODO: handler key deletion failure
+      }
+    }
+    return cloneResult;
+  } catch (err) {
+    if (privateKey){
+      try {
+        await gitKey.dispose();
+      } catch (err2){
+        //TODO: handler key deletion failure
+      }
+    }
+    throw err;
   }
-
-  return cloneResult;
 }
 
 
 module.exports = {
-  cloneUsingSsh: cloneUsingSsh
+  cloneUsingSsh
 };
