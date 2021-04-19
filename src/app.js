@@ -1,16 +1,17 @@
-const { verifyGitVersion, execCommand, splitByNewLine, getSSHCommand } = require("./helpers");
+const { verifyGitVersion, execCommand, splitByNewLine, getSSHCommand, untildify } = require("./helpers");
 const fs = require("fs");
 const os = require('os');
 const isWin = os.platform()=='win32';
-const homeDir = os.homedir();
 const path = require('path');
 
 async function cloneUsingSsh(action, settings){
   // delete directory if already exists
-  const clonePath = (action.params.path).trim().replace("~", homeDir);
-  if (fs.existsSync(clonePath)){
+  const clonePath = (action.params.path).trim();
+  const fixedPath = path.normalize(untildify(clonePath)); // for linux
+  const overwrite = action.params.overwrite && action.params.overwrite !=='false';
+  if (overwrite && fs.existsSync(fixedPath)){
     try{
-      fs.rmdirSync(clonePath, { recursive: true });
+      fs.rmdirSync(fixedPath, { recursive: true });
     }
     catch (err){
       throw "couldn't delete existing directory: "

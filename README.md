@@ -48,5 +48,6 @@ If clone path specified alrady contains the repository, it will be deleted then 
 **Parameters**
 1. SSH key (Vault) **Optional** - The SSH private key to use for the clone.
 2. Repo (String) **Required** - the full repository ssh uri (i.e. `git@github.com:Kaholo/kaholo-plugin-git.git`)
-3. Clone path (String) **Required** - The path to clone the repository to. We recommand using absolute path values.
+3. Clone path (String) **Required** - The path to clone the repository to. We recommand using absolute path values. '~' shortcut is not supported when running on a windows OS agent.
 4. Additional Arguments (Text) **Optional** - Any additional arguments to pass to the clone command. Can enter multiple values by seprating each one with new line or space.
+5. Overwrite If Exists (Boolean) **Optional** - Whether to overwrite exisiting path if a repo already exists, or not. default is false.

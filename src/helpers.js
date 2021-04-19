@@ -1,6 +1,7 @@
 const child_process = require("child_process");
 const compareVersion = require('./compare-versions');
 const GitKey = require('./git-key');
+const homeDirectory = require('os').homedir();
 
 async function verifyGitVersion(){
     const minimalGitRequired = '2.10.0';
@@ -42,11 +43,16 @@ async function getSSHCommand(privateKey, isWin){
 
 function splitByNewLine(text){
     return text.split("\n").map(line => line.trim()).filter(line => line);
-}  
+}
+
+function untildify(path){
+    return homeDirectory ? path.replace(/^~(?=$|\/|\\)/, homeDirectory) : path;
+}
 
 module.exports = {
     verifyGitVersion,
     execCommand,
     splitByNewLine,
-    getSSHCommand
+    getSSHCommand,
+    untildify
 };
