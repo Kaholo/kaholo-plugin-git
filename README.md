@@ -43,7 +43,8 @@ Allowing to use the settings key as the default key when no other key is provide
 
 This method calls clone a git repository using a SSH key if provided.
 The key can either be supplied in the plugin settings or in the action parameter, while action parameter key will have precedence over the settings key.
-If clone path specified alrady contains the repository, it will be deleted then cloned again.
+You can use this method like "git pull" in case you already cloned the repo, if specifying overwrite=true.
+If the clone path is already in use, and overwrite is false, this command will fail.
 
 **Parameters**
 1. SSH key (Vault) **Optional** - The SSH private key to use for the clone.
