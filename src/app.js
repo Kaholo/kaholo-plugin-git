@@ -2,49 +2,45 @@ const { verifyGitVersion, execCommand, splitByNewLine, getSSHCommand, untildify 
 const fs = require("fs");
 const os = require('os');
 const isWin = os.platform()=='win32';
-const path = require('path');
+const normalize = require('path').normalize;
 
 async function cloneUsingSsh(action, settings){
-  // delete directory if already exists
-  const clonePath = (action.params.path).trim();
-  const fixedPath = path.normalize(untildify(clonePath)); // for linux
-  const overwrite = action.params.overwrite && action.params.overwrite !=='false';
-  if (overwrite && fs.existsSync(fixedPath)){
-    try{
-      fs.rmdirSync(fixedPath, { recursive: true });
-    }
-    catch (err){
-      throw "couldn't delete existing directory: "
-    }
-  }
+  // verify git version
   await verifyGitVersion();
-  
-  // return action.params;
-  const repo = (action.params.repo).trim();
-  
-  
+  // get parameters from action and settings
+  const {path, overwrite, repo, branch, sshKey, extraArgs} = action.params;
+  const privateKey = (sshKey || settings.sshKey || "").trim();
+  // delete directory if already exists
+  if (overwrite && overwrite !=='false') tryDelete(normalize(untildify(path)));
+  // parse args
   let gitKey = null;
   const args = ["clone", repo];
-  const privateKey = (action.params.sshKey || settings.sshKey || "").trim();
+
+  if (branch) args.push('-b', branch);
+
   if (privateKey) { // if provided ssh Key
-    const sshRes = await getSSHCommand(privateKey, isWin);
-    gitKey = sshRes[0];
-    args.push(`--config core.sshCommand="${sshRes[1]}"`);
+    const [newGitKey, sshCmd] = await getSSHCommand(privateKey, isWin);
+    gitKey = newGitKey;
+    args.push(`--config core.sshCommand="${sshCmd}"`);
   }
-  if (action.params.extraArgs) args.push(...splitByNewLine(action.params.extraArgs));
-  args.push(clonePath);
+
+  if (extraArgs) args.push(...splitByNewLine(extraArgs));
+  args.push(path);
   
   // clone using key file
+  let cloneResult;
   try {
     const cloneCmd = `git ${args.join(" ")}`;
-  
     if (!isWin && gitKey){
       // add key to ssh agent
       await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
     }
     
     // run clone
-    const cloneResult = await execCommand(cloneCmd);
+    cloneResult = await execCommand(cloneCmd);
+  } 
+  catch (err) { throw err; }
+  finally {
     if (privateKey){
       try {
         await gitKey.dispose();
@@ -52,16 +48,17 @@ async function cloneUsingSsh(action, settings){
         //TODO: handler key deletion failure
       }
     }
-    return cloneResult;
-  } catch (err) {
-    if (privateKey){
-      try {
-        await gitKey.dispose();
-      } catch (err2){
-        //TODO: handler key deletion failure
-      }
-    }
-    throw err;
+  }
+  return cloneResult;
+}
+
+function tryDelete(path){
+  if (!fs.existsSync(path)) return;
+  try{
+    fs.rmdirSync(path, { recursive: true });
+  }
+  catch (err){
+    throw "couldn't delete existing directory: "
   }
 }
 
