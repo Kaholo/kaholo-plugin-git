@@ -4,12 +4,12 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Git plugin",
   "settings": [
     {
       "name": "sshKey",
-      "viewName": "SSH key",
+      "viewName": "SSH Key",
       "type": "vault"
     }
   ],
@@ -20,12 +20,17 @@
       "params": [
         {
           "name": "sshKey",
-          "viewName": "SSH key",
+          "viewName": "SSH Key",
           "type": "vault"
         },
         {
           "name": "repo",
-          "viewName": "Repo",
+          "viewName": "Repository",
+          "type": "string"
+        },
+        {
+          "name": "branch",
+          "viewName": "Branch",
           "type": "string"
         },
         {
