@@ -9,9 +9,9 @@ async function cloneUsingSsh(action, settings){
   await verifyGitVersion();
   // get parameters from action and settings
   const {path, overwrite, repo, branch, sshKey, extraArgs} = action.params;
-  const privateKey = (sshKey || settings.sshKey || "").trim();
+  const privateKey = sshKey || settings.sshKey;
   // delete directory if already exists
-  if (overwrite && overwrite !=='false') tryDelete(normalize(untildify(path)));
+  if (overwrite && overwrite !== 'false') tryDelete(normalize(untildify(path)));
   // parse args
   let gitKey = null;
   const args = ["clone", repo];
