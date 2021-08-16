@@ -28,12 +28,21 @@ async function cloneUsingSsh(action, settings){
   args.push(path);
   
   // clone using key file
-  let cloneResult;
+  let cloneResult, agentUp = false;
   try {
     const cloneCmd = `git ${args.join(" ")}`;
     if (!isWin && gitKey){
+      // check if ssh agent is down or up
+      if (!process.env["SSH_AUTH_SOCK"]) {
+        // ssh agent is down so add command to turn it up and save returned env variables
+        const sshAgentResult = await execCommand(`ssh-agent`);
+        const matchResult = sshAgentResult.matchAll(/(SSH_AUTH_SOCK|SSH_AGENT_PID)=([^;]+);/g);
+        process.env["SSH_AUTH_SOCK"] = matchResult.next().value[2];
+        process.env["SSH_AGENT_PID"] = matchResult.next().value[2];
+        agentUp = true;
+      }
       // add key to ssh agent
-      await execCommand(`eval \`ssh-agent -s\` && ssh-add ${gitKey.keyPath}`);
+      await execCommand(`ssh-add ${gitKey.keyPath}`);
     }
     
     // run clone
@@ -41,12 +50,13 @@ async function cloneUsingSsh(action, settings){
   } 
   catch (err) { throw err; }
   finally {
+    if (agentUp){
+      try { await execCommand(`eval \`ssh-agent -k\``); }
+      catch (err) {}
+    }
     if (privateKey){
-      try {
-        await gitKey.dispose();
-      } catch (err2){
-        //TODO: handler key deletion failure
-      }
+      try { await gitKey.dispose();} 
+      catch (err){}
     }
   }
   return cloneResult;

@@ -1,6 +1,6 @@
 {
   "name": "kaholo-plugin-git",
-  "version": "2.2.2",
+  "version": "2.2.4",
   "description": "",
   "main": "app.js",
   "scripts": {

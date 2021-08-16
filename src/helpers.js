@@ -21,6 +21,7 @@ async function verifyGitVersion(){
 }
   
 async function execCommand(command, opts = {}){
+    if (!opts.env) opts.env = process.env;
     return new Promise((resolve,reject) => {
         child_process.exec(command, opts, (error, stdout, stderr) => {
             if (error) {
