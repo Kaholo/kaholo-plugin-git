@@ -5,32 +5,9 @@ This plugin is a wrapper for the git cli. Therefore git cli must be installed on
 
 Git version must be equal or higher than 2.10.0, due to the usage of the `core.sshCommand` used.
 
-
-## Key storing ##
-
-
-The SSH key is taken from the vault, currently the Kaholo vault does not support multiline strings. 
-Therefore please format your key by removing newlines and replace them with `\n`.
-
-For example, the following key:
-```text
------BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
------END OPENSSH PRIVATE KEY-----
-
-```
-
-Should become:
-```text
------BEGIN OPENSSH PRIVATE KEY----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\n-----END OPENSSH PRIVATE KEY-----\n
-```
-
-The plugin code restructures it correctly behind the scenes.
-
 ### Keys precedence ###
 In any action that takes a SSH key as a parameter, precedence will be given to it over the key set in the settings.
 Allowing to use the settings key as the default key when no other key is provided.
-
 
 ## Settings ##
 
