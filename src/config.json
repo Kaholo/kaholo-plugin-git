@@ -4,7 +4,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.2.4",
+  "version": "2.3.1",
   "description": "Git plugin",
   "settings": [
     {
@@ -22,6 +22,16 @@
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault"
+        },
+        {
+          "name": "username",
+          "viewName": "Username",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "viewName": "Email",
+          "type": "string"
         },
         {
           "name": "repo",
@@ -47,6 +57,120 @@
           "name": "overwrite",
           "viewName": "Overwrite If Exists",
           "type": "boolean"
+        },
+        {
+          "name": "saveCreds",
+          "viewName": "Save Credentials",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "pull",
+      "viewName": "Pull",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Repository Path",
+          "type": "string"
+        },
+        {
+          "name": "force",
+          "viewName": "Force Pull",
+          "type": "boolean"
+        },
+        {
+          "name": "commitMerge",
+          "viewName": "Commit Merge",
+          "type": "boolean"
+        },
+        {
+          "name": "extraArgs",
+          "viewName": "Additional Arguments",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "pushTag",
+      "viewName": "Push Tag",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Repository Path",
+          "type": "string"
+        },
+        {
+          "name": "username",
+          "viewName": "Username",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "viewName": "Email",
+          "type": "string"
+        },
+        {
+          "name": "tagName",
+          "viewName": "Tag Name",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "viewName": "Tag Message",
+          "type": "string"
+        },
+        {
+          "name": "noPush",
+          "viewName": "Don't Push",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "addCommit",
+      "viewName": "Add Commit And Push",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Repository Path",
+          "type": "string"
+        },
+        {
+          "name": "username",
+          "viewName": "Username",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "viewName": "Email",
+          "type": "string"
+        },
+        {
+          "name": "commitMessage",
+          "viewName": "Commit Message",
+          "type": "string"
+        },
+        {
+          "name": "override",
+          "viewName": "Override Add Argumants",
+          "type": "text"
+        },
+        {
+          "name": "noPush",
+          "viewName": "Don't Push",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "remove",
+      "viewName": "Remove And Clean Repository",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "Repository Path",
+          "type": "string"
         }
       ]
     }
