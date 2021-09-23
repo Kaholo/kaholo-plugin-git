@@ -4,7 +4,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Git plugin",
   "settings": [
     {
