@@ -19,7 +19,7 @@ If the clone path is already in use, and overwrite is false, this command will f
 4. Repository (String) **Required** - The URL of the repository to clone. Needs to be in SSH format in case SSH key was provided.
 5. Branch (String) **Optional** - The branch of the repository to clone from. On default clone from the repo's default branch.
 6. Clone Path (String) **Required** - The path to clone the repository to. **Recomnded to give a new path.**
-7. Additional Arguments (Text) **Optional** - If specified, use the provided arguments with the Git clone command.  Can enter multiple argumants by seperating each argument with a space or a new line.
+7. Additional Arguments (Text) **Optional** - If specified, use the provided arguments with the Git clone command.  Can enter multiple argumants by seperating each argument with a new line.
 8. Overwrite If Exists (Boolean) **Optional** - If true and the path provided is not an empty folder, delete it before cloning. If it's a git repository also delete the associated SSH key if it was stored.
 9. Save Credentials (Boolean) **Optional** - If true, save the SSH key used to clone, in order to to be able and do more git commands on the repository. **Required for the methods: Pull, Push Tag, Add Commit And Push.**
 
