@@ -4,13 +4,16 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.3.2",
-  "description": "Git plugin",
+  "version": "2.3.3",
+  "description": "Kaholo plugin for integration with Git.",
+  "category": "SOURCE CONTROL",
+  "keywords": ["code", "dev", "developer", "repo", "repository", "package", "version", "cloud"],
   "settings": [
     {
       "name": "sshKey",
       "viewName": "SSH Key",
-      "type": "vault"
+      "type": "vault",
+      "description": "SSH key to be used as the default SSH key to authenticate to GitHub with."
     }
   ],
   "methods": [
@@ -21,47 +24,56 @@
         {
           "name": "sshKey",
           "viewName": "SSH Key",
-          "type": "vault"
+          "type": "vault",
+          "description": "SSH key to use for authentication for this request only. If specified need to also provide the Repository URL in it's SSH format."
         },
         {
           "name": "username",
           "viewName": "Username",
-          "type": "string"
+          "type": "string",
+          "description": "If provided, save the specified username to use when pushing commits or tags to this repository."
         },
         {
           "name": "email",
           "viewName": "Email",
-          "type": "string"
+          "type": "string",
+          "description": "If provided, save the specified email to use when pushing commits or tags to this repository."
         },
         {
           "name": "repo",
           "viewName": "Repository",
-          "type": "string"
+          "type": "string",
+          "description": "The URL of the repository to clone. Needs to be in SSH format in case SSH key was provided."
         },
         {
           "name": "branch",
           "viewName": "Branch",
-          "type": "string"
+          "type": "string",
+          "description": "The branch of the repository to clone from. On default clone from the branch configured to be default."
         },
         {
           "name": "path",
           "viewName": "Clone Path",
-          "type": "string"
+          "type": "string",
+          "description": "The path to clone the repository to. It's recomnded to give a new path to clone into."
         },
         {
           "name": "extraArgs",
           "viewName": "Additional Arguments",
-          "type": "text"
+          "type": "text",
+          "description": "If specified, use the provided arguments with the Git clone command.  Can enter multiple argumants by seperating each argument with a new line."
         },
         {
           "name": "overwrite",
           "viewName": "Overwrite If Exists",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true and the path provided is not an empty folder, delete it before cloning. If it's a git repository also delete the associated SSH key if it was stored."
         },
         {
           "name": "saveCreds",
           "viewName": "Save Credentials",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true, save the SSH key used to clone, in order to to be able and do more git commands on the repository. Required for the methods: Pull, Push Tag, Add Commit And Push."
         }
       ]
     },
@@ -72,22 +84,26 @@
         {
           "name": "path",
           "viewName": "Repository Path",
-          "type": "string"
+          "type": "string",
+          "description": "The path of the folder containing the git repository."
         },
         {
           "name": "force",
           "viewName": "Force Pull",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true use the 'Force' flag when pulling."
         },
         {
           "name": "commitMerge",
           "viewName": "Commit Merge",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true, commit any merges happend by the pull."
         },
         {
           "name": "extraArgs",
           "viewName": "Additional Arguments",
-          "type": "text"
+          "type": "text",
+          "description": "If specifed, add the specifed arguments to the Git Pull command. Can enter multiple argumants by seperating each argument with a new line."
         }
       ]
     },
@@ -98,32 +114,38 @@
         {
           "name": "path",
           "viewName": "Repository Path",
-          "type": "string"
+          "type": "string",
+          "description": "The path of the folder containing the git repository."
         },
         {
           "name": "username",
           "viewName": "Username",
-          "type": "string"
+          "type": "string",
+          "description": ""
         },
         {
           "name": "email",
           "viewName": "Email",
-          "type": "string"
+          "type": "string",
+          "description": "The email to use to push to the repository."
         },
         {
           "name": "tagName",
           "viewName": "Tag Name",
-          "type": "string"
+          "type": "string",
+          "description": "The name of the tag to create."
         },
         {
           "name": "message",
           "viewName": "Tag Message",
-          "type": "string"
+          "type": "string",
+          "description": "If specified, attach the specified message to the tag. If not specified, tag created will be a 'lightweight' tag with no message."
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true, don't push the tag created to the remote repository."
         }
       ]
     },
@@ -134,32 +156,38 @@
         {
           "name": "path",
           "viewName": "Repository Path",
-          "type": "string"
+          "type": "string",
+          "description": "The path of the folder containing the git repository."
         },
         {
           "name": "username",
           "viewName": "Username",
-          "type": "string"
+          "type": "string",
+          "description": "The username to use to push to the repository."
         },
         {
           "name": "email",
           "viewName": "Email",
-          "type": "string"
+          "type": "string",
+          "description": "The email to use to push to the repository."
         },
         {
           "name": "commitMessage",
           "viewName": "Commit Message",
-          "type": "string"
+          "type": "string",
+          "description": "A message to attach to the commit, describing the chanes inside."
         },
         {
           "name": "override",
           "viewName": "Override Add Argumants",
-          "type": "text"
+          "type": "text",
+          "description": "If specified, use the specified argumants for the Git add command instead of adding all changed files to the commit. You can enter multiple values by seperating each with a new line."
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true, don't push the commit created to the remote repository."
         }
       ]
     },
@@ -170,7 +198,8 @@
         {
           "name": "path",
           "viewName": "Repository Path",
-          "type": "string"
+          "type": "string",
+          "description": "The path of the folder containing the git repository."
         }
       ]
     }
