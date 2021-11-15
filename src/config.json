@@ -4,16 +4,27 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Kaholo plugin for integration with Git.",
   "category": "SOURCE CONTROL",
-  "keywords": ["code", "dev", "developer", "repo", "repository", "package", "version", "cloud"],
+  "keywords": [
+    "code",
+    "dev",
+    "developer",
+    "repo",
+    "repository",
+    "package",
+    "version",
+    "cloud"
+  ],
   "settings": [
     {
       "name": "sshKey",
       "viewName": "SSH Key",
       "type": "vault",
-      "description": "SSH key to be used as the default SSH key to authenticate to GitHub with."
+      "description": "SSH key to be used as the default SSH key to authenticate to GitHub with.",
+      "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
+      "learnUrl": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
     }
   ],
   "methods": [
@@ -25,55 +36,73 @@
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
-          "description": "SSH key to use for authentication for this request only. If specified need to also provide the Repository URL in it's SSH format."
+          "description": "SSH key taken from the vault items.",
+          "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "If provided, save the specified username to use when pushing commits or tags to this repository."
+          "description": "Username with access rights to the repository.",
+          "placeholder": "myusername",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "If provided, save the specified email to use when pushing commits or tags to this repository."
+          "description": "Email address of the authorised user.",
+          "placeholder": "my@email.com",
+          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
         },
         {
           "name": "repo",
           "viewName": "Repository",
           "type": "string",
-          "description": "The URL of the repository to clone. Needs to be in SSH format in case SSH key was provided."
+          "description": "The repository shared URL.",
+          "placeholder": "git://host.xz[:port]/path/to/repo.git/",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
         {
           "name": "branch",
           "viewName": "Branch",
           "type": "string",
-          "description": "The branch of the repository to clone from. On default clone from the branch configured to be default."
+          "description": "The branch of the repository.",
+          "placeholder": "master",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
-          "description": "The path to clone the repository to. It's recomnded to give a new path to clone into."
+          "description": "Folder path for the cloned repository.",
+          "placeholder": "/home/user/clone_path/",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
         },
         {
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
-          "description": "If specified, use the provided arguments with the Git clone command.  Can enter multiple argumants by seperating each argument with a new line."
+          "description": "Add arguments to the git command.",
+          "placeholder": "--quiet",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
         },
         {
           "name": "overwrite",
           "viewName": "Overwrite If Exists",
           "type": "boolean",
-          "description": "If true and the path provided is not an empty folder, delete it before cloning. If it's a git repository also delete the associated SSH key if it was stored."
+          "description": "Overwriting the clone onto the provided path.",
+          "learnUrl": "https://git-scm.com/docs/git-clone",
+          "placeholder": "true/false"
         },
         {
           "name": "saveCreds",
           "viewName": "Save Credentials",
           "type": "boolean",
-          "description": "If true, save the SSH key used to clone, in order to to be able and do more git commands on the repository. Required for the methods: Pull, Push Tag, Add Commit And Push."
+          "description": "Saving the SSH key for the usage of pull/push/tag/add/commit.",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server",
+          "placeholder": "e.g."
         }
       ]
     },
@@ -85,25 +114,33 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "The path of the folder containing the git repository."
+          "description": "Path of the folder that will contain the pulled git repository.",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "force",
           "viewName": "Force Pull",
           "type": "boolean",
-          "description": "If true use the 'Force' flag when pulling."
+          "description": "Email address of the authorised user.",
+          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email",
+          "placeholder": "my@email.com"
         },
         {
           "name": "commitMerge",
           "viewName": "Commit Merge",
           "type": "boolean",
-          "description": "If true, commit any merges happend by the pull."
+          "description": "Description to the tag name for the repository.",
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "placeholder": "this_is_my_tag_for_dev"
         },
         {
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
-          "description": "If specifed, add the specifed arguments to the Git Pull command. Can enter multiple argumants by seperating each argument with a new line."
+          "description": "Tag the repository you want to pull.",
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "placeholder": "Tag-1"
         }
       ]
     },
@@ -115,37 +152,48 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "The path of the folder containing the git repository."
+          "description": "Path of the folder that will contain the pulled git repository.",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": ""
+          "description": "Username with access rights to the repository.",
+          "placeholder": "myusername",
+          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "The email to use to push to the repository."
+          "description": "Email address of the authorised user.",
+          "placeholder": "my@email.com",
+          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
         },
         {
           "name": "tagName",
           "viewName": "Tag Name",
           "type": "string",
-          "description": "The name of the tag to create."
+          "description": "Tag name.",
+          "learnUrl": "https://git-scm.com/book/en/Git-Basics-Tagging",
+          "placeholder": "kaholo-server"
         },
         {
           "name": "message",
           "viewName": "Tag Message",
           "type": "string",
-          "description": "If specified, attach the specified message to the tag. If not specified, tag created will be a 'lightweight' tag with no message."
+          "description": "Description to tag name",
+          "placeholder": "Added new feautre: ...",
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
-          "description": "If true, don't push the tag created to the remote repository."
+          "description": "If true, don't push the tag created to the remote repository.",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
         }
       ]
     },
@@ -157,37 +205,49 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "The path of the folder containing the git repository."
+          "description": "Path of the folder that will contain the pulled git repository.",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "The username to use to push to the repository."
+          "description": "Username with access rights to the repository.",
+          "placeholder": "myusername",
+          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "The email to use to push to the repository."
+          "description": "Email address of the authorised user.",
+          "placeholder": "my@email.com",
+          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
         },
         {
           "name": "commitMessage",
           "viewName": "Commit Message",
           "type": "string",
-          "description": "A message to attach to the commit, describing the chanes inside."
+          "description": "Add a message while doing the commit.",
+          "placeholder": "This_is_version_5",
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "override",
           "viewName": "Override Add Argumants",
           "type": "text",
-          "description": "If specified, use the specified argumants for the Git add command instead of adding all changed files to the commit. You can enter multiple values by seperating each with a new line."
+          "description": "Add arguments to the commit command.",
+          "placeholder": "[-a | --interactive | --patch]",
+          "learnUrl": "https://git-scm.com/docs/git-push"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
-          "description": "If true, don't push the commit created to the remote repository."
+          "description": "Do not push the created tag to the remote repository.",
+          "learnUrl": "https://git-scm.com/docs/git-push",
+          "placeholder": "true/false"
         }
       ]
     },
@@ -199,7 +259,9 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "The path of the folder containing the git repository."
+          "description": "Path of the folder that will contain the git repository to delete.",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://git-scm.com/docs/git-clean"
         }
       ]
     }
