@@ -4,7 +4,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.3.4",
+  "version": "2.4.0",
   "description": "Kaholo plugin for integration with Git.",
   "category": "SOURCE CONTROL",
   "keywords": [
@@ -30,7 +30,7 @@
   "methods": [
     {
       "name": "cloneUsingSsh",
-      "viewName": "Clone using SSH",
+      "viewName": "Clone",
       "params": [
         {
           "name": "sshKey",
@@ -44,17 +44,14 @@
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username with access rights to the repository.",
-          "placeholder": "myusername",
-          "learnUrl": "https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage"
+          "description": "Username of user with access rights to the repository.",
+          "placeholder": "myusername"
         },
         {
-          "name": "email",
-          "viewName": "Email",
-          "type": "string",
-          "description": "Email address of the authorised user.",
-          "placeholder": "my@email.com",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
+          "name": "password",
+          "viewName": "Password",
+          "type": "vault",
+          "description": "For authentication with username and password, instead of SSH key."
         },
         {
           "name": "repo",

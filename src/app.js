@@ -9,20 +9,26 @@ async function cloneUsingSsh(action, settings) {
   await verifyGitVersion();
   // get parameters from action and settings
   const path = parsers.path(action.params.path);
-  const repo = parsers.string(action.params.repo);
+  var repo = parsers.string(action.params.repo);
   const branch = parsers.string(action.params.branch);
-  const { overwrite, sshKey, extraArgs, saveCreds } = action.params;
+  const { overwrite, sshKey, extraArgs, saveCreds, username, password } = action.params;
   if (!path || !repo) throw "One of the required parameters was not provided";
   const privateKey = sshKey || settings.sshKey;
   // delete directory if already exists
   if (overwrite) await tryDelete(path);
   // parse args
   let gitKey = null;
+  if (username && password) {
+    if (!repo.startsWith("https://")){
+      throw "Can only use username and password authentication for repository URLs in HTTPS format."
+    }
+    repo = repo.slice(0, 8) + `${username}:${password}@` + repo.slice(8);
+  }
   const args = ["clone", repo];
 
   if (branch) args.push('-b', branch);
 
-  if (privateKey) { // if provided ssh Key
+  if (privateKey && !(username && password)) { // if provided ssh Key and not username and password
     const [newGitKey, sshCmd] = await getSSHCommand(privateKey, saveCreds);
     gitKey = newGitKey;
     args.push(`--config core.sshCommand="${sshCmd}"`);
@@ -37,7 +43,6 @@ async function cloneUsingSsh(action, settings) {
     didTurnAgentUp = await turnSshAgentUp(gitKey);
     // run clone
     const cloneResult = await execGitCommand(args);
-    // after clone set username and email if provided
     return cloneResult;
   }
   catch (err) { throw err; }
