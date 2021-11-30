@@ -18,7 +18,8 @@ class GitKey{
     if (!keyParam){
       throw "SSH key must be specified";
     }
-    const key = keyParam.replace(/\\n/g,'\n');
+    var key = keyParam.replace(/\\n/g,'\n');
+    if (!key.endsWith("\n")) key += "\n";
     
     // Write private key to file
     const keyFileName = `git-key-${uuidv4()}.pem`;
@@ -44,20 +45,23 @@ class GitKey{
    * @returns {Promise<GitKey | null>}
    */
    static async fromRepoFolder(path){
+    // require here and not in top of file to not make circular dependencies
     const {execGitCommand} = require('./helpers');
     if (!path){
       throw "Must provide repository path";
     }
     try {
       const sshCommand = await execGitCommand(["config --get core.sshCommand"], path);
-      const keyPath = sshCommand.match(/-i ([^\n\r]+)/)[1].replace(/\\\\/g, "\\");
-      if (!keyPath) return null;
+      if (!sshCommand) return undefined;
+      const matches = sshCommand.match(/-i ([^\n\r]+)/);
+      if (!matches) return undefined;
+      const keyPath = matches[1].replace(/\\\\/g, "\\");
+      if (!keyPath) return undefined;
       return new GitKey(keyPath);
     }
     catch (err) {
       console.error(err);
-      throw err;
-      return null;
+      return undefined;
     }
   }
 
