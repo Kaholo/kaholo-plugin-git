@@ -7,15 +7,16 @@ Git version must be equal or higher than 2.10.0, due to the usage of the `core.s
 ## Settings
 1. SSH Key (Vault) **Optional** - SSH key to be used as the default SSH key when no other keys are specified.
 
-## Method: Clone using SSH
-Clone the specified git repository. Can clone using SSH in the case an SSH key was provided.
+## Method: Clone
+Clone the specified git repository. Can clone using either SSH key or username and password.
 You can use this method like "git pull" in case you already cloned the repo, if specifying overwrite=true.
 If the clone path is already in use, and overwrite is false, this command will fail.
+Save credentials currently only supports saving an SSH key, and doesn't work with username and password.
 
 ### Parameters
 1. SSH Key (Vault) **Optional** - If provided, use the specified key to connect with SSH to the repository URL for cloning.
-2. Username (String) **Optional** - If provided, save the specified username to use when pushing commits or tags to the repository.
-3. Email (String) **Optional** - If provided, save the specified email to use when pushing commits or tags to the repository.
+2. Username (String) **Optional** - If provided, use the specified username to authenticate.
+3. Password (Vault) **Optional** - If provided, use the specified password to authenticate.
 4. Repository (String) **Required** - The URL of the repository to clone. Needs to be in SSH format in case SSH key was provided.
 5. Branch (String) **Optional** - The branch of the repository to clone from. On default clone from the repo's default branch.
 6. Clone Path (String) **Required** - The path to clone the repository to. **Recomnded to give a new path.**
