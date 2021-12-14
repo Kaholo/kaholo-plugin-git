@@ -4,19 +4,10 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Kaholo plugin for integration with Git.",
   "category": "SOURCE CONTROL",
-  "keywords": [
-    "code",
-    "dev",
-    "developer",
-    "repo",
-    "repository",
-    "package",
-    "version",
-    "cloud"
-  ],
+  "keywords": ["code", "dev", "developer", "repo", "repository", "package", "version", "cloud"],
   "settings": [
     {
       "name": "sshKey",
