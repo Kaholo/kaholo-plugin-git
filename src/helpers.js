@@ -30,11 +30,11 @@ async function execCommand(command, opts = {}){
     return new Promise((resolve,reject) => {
         child_process.exec(command, opts, (error, stdout, stderr) => {
             if (error) {
-                console.log(`${stdout}`)
+               console.log(`${stdout}`)
                return reject(error);
             }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
+            if (stderr && !stdout){
+              stdout = `${stderr}\nSucces!`;
             }
             return resolve(stdout);
         });

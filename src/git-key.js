@@ -60,7 +60,6 @@ class GitKey{
       return new GitKey(keyPath);
     }
     catch (err) {
-      console.error(err);
       return undefined;
     }
   }

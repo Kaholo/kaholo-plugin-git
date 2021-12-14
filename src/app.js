@@ -40,7 +40,7 @@ async function cloneUsingSsh(action, settings) {
   // clone using key file
   let didTurnAgentUp = false;
   try {
-    didTurnAgentUp = await turnSshAgentUp(gitKey);
+    if (gitKey) didTurnAgentUp = await turnSshAgentUp(gitKey);
     // run clone
     const cloneResult = await execGitCommand(args);
     return cloneResult;
@@ -48,11 +48,9 @@ async function cloneUsingSsh(action, settings) {
   catch (err) { throw err; }
   finally {
     if (didTurnAgentUp) await killSshAgent();
-    if (privateKey) {
+    if (privateKey && gitKey) {
       try { await gitKey.dispose(); }
-      catch (err) {
-        Console.error(typeof (err) === "object" ? err.message || err : err);
-      }
+      catch (err) {}
     }
   }
 }
