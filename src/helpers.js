@@ -63,9 +63,7 @@ async function tryDelete(path){
     const gitKey = await GitKey.fromRepoFolder(path);
     if (gitKey) await gitKey.dispose();
   }
-  catch (err){
-    throw `couldn't delete the key`;
-  }
+  catch (err){}
   finally{
     try {
       fs.rmdirSync(path, { recursive: true });
