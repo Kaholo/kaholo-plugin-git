@@ -4,7 +4,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "Kaholo plugin for integration with Git.",
   "category": "SOURCE CONTROL",
   "keywords": [
@@ -30,7 +30,7 @@
   "methods": [
     {
       "name": "cloneUsingSsh",
-      "viewName": "Clone",
+      "viewName": "Clone private repository",
       "params": [
         {
           "name": "sshKey",
@@ -100,6 +100,54 @@
           "description": "Saving the SSH key for the usage of pull/push/tag/add/commit.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server",
           "placeholder": "e.g."
+        }
+      ]
+    },
+    {
+      "name": "clonePublic",
+      "viewName": "Clone public repository",
+      "params": [
+        {
+          "name": "repo",
+          "viewName": "Repository",
+          "type": "string",
+          "required": true,
+          "description": "The repository shared URL.",
+          "placeholder": "git://host.xz[:port]/path/to/repo.git/",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
+        },
+        {
+          "name": "branch",
+          "viewName": "Branch",
+          "type": "string",
+          "description": "The branch of the repository.",
+          "placeholder": "master",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
+        },
+        {
+          "name": "path",
+          "viewName": "Clone Path",
+          "type": "string",
+          "required": true,
+          "description": "Folder path for the cloned repository.",
+          "placeholder": "/home/user/clone_path/",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
+        },
+        {
+          "name": "extraArgs",
+          "viewName": "Additional Arguments",
+          "type": "text",
+          "description": "Add arguments to the git command.",
+          "placeholder": "--quiet",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
+        },
+        {
+          "name": "overwrite",
+          "viewName": "Overwrite If Exists",
+          "type": "boolean",
+          "description": "Overwriting the clone onto the provided path.",
+          "learnUrl": "https://git-scm.com/docs/git-clone",
+          "placeholder": "true/false"
         }
       ]
     },
