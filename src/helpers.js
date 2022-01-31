@@ -34,7 +34,7 @@ async function execCommand(command, opts = {}){
                return reject(error);
             }
             if (stderr && !stdout){
-              stdout = `${stderr}\nSucces!`;
+              stdout = `${stderr}\nSuccess!`;
             }
             return resolve(stdout);
         });

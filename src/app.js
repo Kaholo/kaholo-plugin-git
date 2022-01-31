@@ -55,6 +55,31 @@ async function cloneUsingSsh(action, settings) {
   }
 }
 
+async function clonePublic(action) {
+  await verifyGitVersion();
+  const path = parsers.path(action.params.path);
+  const repo = parsers.string(action.params.repo);
+  const branch = parsers.string(action.params.branch);
+  const { overwrite, extraArgs } = action.params;
+
+  if (!path || !repo) throw "One of the required parameters was not provided";
+  if (overwrite) await tryDelete(path);
+  
+  const args = ["clone", repo];
+
+  if (branch) args.push('-b', branch);
+
+  if (extraArgs) args.push(...parsers.array(extraArgs));
+  args.push(path);
+
+  try {
+    const cloneResult = await execGitCommand(args);
+    return cloneResult;
+  }
+  catch (err) { throw err; }
+
+}
+
 async function pull(action) {
   const path = parsers.path(action.params.path);
   const { force, commitMerge, extraArgs } = action.params;
@@ -147,6 +172,7 @@ async function remove(action) {
 
 module.exports = {
   cloneUsingSsh,
+  clonePublic,
   pull,
   pushTag,
   addCommit,
