@@ -1,5 +1,6 @@
 {
   "name": "Git",
+  "viewName": "Git",
   "type": "executer",
   "execProgram": "node",
   "main": "app.js",
@@ -44,7 +45,7 @@
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username of user with access rights to the repository.",
+          "description": "Username with access rights to the repository.",
           "placeholder": "myusername"
         },
         {
@@ -161,7 +162,7 @@
           "type": "string",
           "description": "Path of the folder that will contain the pulled git repository.",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
+          "learnUrl": "https://git-scm.com/docs/git-pull"
         },
         {
           "name": "force",
@@ -175,7 +176,7 @@
           "name": "commitMerge",
           "viewName": "Commit Merge",
           "type": "boolean",
-          "description": "Description to the tag name for the repository.",
+          "description": "Description of the tag name for the repository.",
           "learnUrl": "https://git-scm.com/docs/git-tag",
           "placeholder": "this_is_my_tag_for_dev"
         },
@@ -199,7 +200,7 @@
           "type": "string",
           "description": "Path of the folder that will contain the pulled git repository.",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
+          "learnUrl": "https://git-scm.com/docs/git-pull"
         },
         {
           "name": "username",
@@ -230,7 +231,7 @@
           "viewName": "Tag Message",
           "type": "string",
           "description": "Description to tag name",
-          "placeholder": "Added new feautre: ...",
+          "placeholder": "Added new feature: ...",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
@@ -252,7 +253,6 @@
           "type": "string",
           "description": "Path of the folder that will contain the pulled git repository.",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "username",
@@ -260,7 +260,6 @@
           "type": "string",
           "description": "Username with access rights to the repository.",
           "placeholder": "myusername",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
         },
         {
           "name": "email",
