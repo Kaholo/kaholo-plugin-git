@@ -252,14 +252,14 @@
           "viewName": "Repository Path",
           "type": "string",
           "description": "Path of the folder that will contain the pulled git repository.",
-          "placeholder": "/home/username/path/",
+          "placeholder": "/home/username/path/"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
           "description": "Username with access rights to the repository.",
-          "placeholder": "myusername",
+          "placeholder": "myusername"
         },
         {
           "name": "email",
