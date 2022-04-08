@@ -1,14 +1,20 @@
 {
   "name": "kaholo-plugin-git",
-  "version": "2.3.0",
-  "description": "",
+  "description": "Kaholo plugin for integration with Git",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "author": "Kaholo Group(Amit Alon and Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4"
   }
 }
