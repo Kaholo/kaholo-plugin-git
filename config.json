@@ -5,8 +5,8 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.4.4",
-  "description": "Kaholo plugin for integration with Git.",
+  "version": "2.4.5",
+  "description": "Kaholo plugin for integration with Git",
   "category": "SOURCE CONTROL",
   "keywords": [
     "code",
