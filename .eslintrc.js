@@ -14,7 +14,7 @@ module.exports = {
   rules: {
     quotes: ["error", "double"],
     curly: ["error", "all"],
-    "no-console": ["error", { allow: ["info", "warn", "error"] }],
+    "no-console": ["warn", { allow: ["info", "warn", "error"] }],
     "no-use-before-define": ["error", { functions: false }],
   },
 };
