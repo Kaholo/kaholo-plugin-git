@@ -4,7 +4,7 @@ function parseArray(value) {
   if (!value) { return []; }
   if (Array.isArray(value)) { return value; }
   if (typeof (value) === "string") { return value.split("\n").map((line) => line.trim()).filter((line) => line); }
-  throw "Unsupprted array format";
+  throw new Error("Unsupprted array format");
 }
 
 module.exports = {
@@ -18,9 +18,9 @@ module.exports = {
   },
   number: (value) => {
     if (!value) { return undefined; }
-    const parsed = parseInt(value);
-    if (parsed === NaN) {
-      throw `Value ${value} is not a valid number`;
+    const parsed = parseInt(value, 10);
+    if (parsed.isNaN) {
+      throw new Error(`Value ${value} is not a valid number`);
     }
     return parsed;
   },
@@ -37,13 +37,13 @@ module.exports = {
   },
   object: (value) => {
     if (!value) { return undefined; }
-    if (typeof (value) !== "object") { throw `Value ${value} is not an object`; }
+    if (typeof (value) !== "object") { throw new Error(`Value ${value} is not an object`); }
     return value;
   },
   string: (value) => {
     if (!value) { return undefined; }
     if (typeof (value) === "string") { return value.trim(); }
-    throw `Value ${value} is not a valid string`;
+    throw new Error(`Value ${value} is not a valid string`);
   },
   path: (value) => {
     if (!value) { return undefined; }

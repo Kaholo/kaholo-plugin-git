@@ -1,6 +1,7 @@
 const fs = require("fs");
-const path = require("path");
+const pathmodule = require("path");
 const { v4: uuidv4 } = require("uuid");
+const { execGitCommand } = require("./helpers");
 
 class GitKey {
   constructor(keyPath, saveCreds) {
@@ -15,24 +16,25 @@ class GitKey {
    */
   static async from(keyParam, saveCreds) {
     if (!keyParam) {
-      throw "SSH key must be specified";
+      throw new Error("SSH key must be specified.");
     }
     let key = keyParam.replace(/\\n/g, "\n");
     if (!key.endsWith("\n")) { key += "\n"; }
 
     // Write private key to file
     const keyFileName = `git-key-${uuidv4()}.pem`;
-    const keyPath = path.join(__dirname, keyFileName);
+    const keyPath = pathmodule.join(__dirname, keyFileName);
     return new Promise((resolve, reject) => {
       fs.writeFile(keyPath, key, (err) => {
         if (err) { return reject(err); }
-
         // Set key file permissions
         fs.chmod(keyPath, "0400", (error) => {
           if (error) { return reject(error); }
           const gitKey = new GitKey(keyPath, saveCreds);
           resolve(gitKey);
+          return null;
         });
+        return null;
       });
     });
   }
@@ -44,9 +46,8 @@ class GitKey {
    */
   static async fromRepoFolder(path) {
     // require here and not in top of file to not make circular dependencies
-    const { execGitCommand } = require("./helpers");
     if (!path) {
-      throw "Must provide repository path";
+      throw new Error("Must provide repository path.");
     }
     try {
       const sshCommand = await execGitCommand(["config --get core.sshCommand"], path);
@@ -62,12 +63,12 @@ class GitKey {
   }
 
   async dispose() {
-    if (this.saveCreds) { return; }
+    if (this.saveCreds) { return Promise.resolve(); }
     const self = this;
     return new Promise((resolve, reject) => {
       fs.unlink(self.keyPath, (err) => {
         if (err) { return reject(err); }
-        resolve();
+        return resolve();
       });
     });
   }

@@ -16,7 +16,7 @@ async function cloneUsingSsh(action, settings) {
   const {
     overwrite, sshKey, extraArgs, saveCreds, username, password,
   } = action.params;
-  if (!path || !repo) { throw "One of the required parameters was not provided"; }
+  if (!path || !repo) { throw new Error("Both Clone Path and Repository are required parameters."); }
   const privateKey = sshKey || settings.sshKey;
   // delete directory if already exists
   if (overwrite) { await tryDelete(path); }
@@ -24,7 +24,7 @@ async function cloneUsingSsh(action, settings) {
   let gitKey = null;
   if (username && password) {
     if (!repo.startsWith("https://")) {
-      throw "Can only use username and password authentication for repository URLs in HTTPS format.";
+      throw new Error("Username and password authentication can be used only for repository URLs in HTTPS format.");
     }
     repo = `${repo.slice(0, 8)}${username}:${password}@${repo.slice(8)}`;
   }
@@ -48,10 +48,10 @@ async function cloneUsingSsh(action, settings) {
     // run clone
     const cloneResult = await execGitCommand(args);
     return cloneResult;
-  } catch (err) { throw err; } finally {
+  } finally {
     if (didTurnAgentUp) { await killSshAgent(); }
     if (privateKey && gitKey) {
-      try { await gitKey.dispose(); } catch (err) {}
+      await gitKey.dispose();
     }
   }
 }
@@ -63,7 +63,7 @@ async function clonePublic(action) {
   const branch = parsers.string(action.params.branch);
   const { overwrite, extraArgs } = action.params;
 
-  if (!path || !repo) { throw "One of the required parameters was not provided"; }
+  if (!path || !repo) { throw new Error("Both Clone Path and Repository are required parameters."); }
   if (overwrite) { await tryDelete(path); }
 
   const args = ["clone", repo];
@@ -73,16 +73,14 @@ async function clonePublic(action) {
   if (extraArgs) { args.push(...parsers.array(extraArgs)); }
   args.push(path);
 
-  try {
-    const cloneResult = await execGitCommand(args);
-    return cloneResult;
-  } catch (err) { throw err; }
+  const cloneResult = await execGitCommand(args);
+  return cloneResult;
 }
 
 async function pull(action) {
   const path = parsers.path(action.params.path);
   const { force, commitMerge, extraArgs } = action.params;
-  if (!path) { throw "Must provide repository path"; }
+  if (!path) { throw new Error("Repository Path is a requried parameter."); }
   const didTurnAgentUp = isWin ? false : await turnSshAgentUp(await GitKey.fromRepoFolder(path));
   const args = ["pull"];
   if (force) { args.push("-f"); }
@@ -91,7 +89,7 @@ async function pull(action) {
   try {
     const result = await execGitCommand(args, path);
     return result;
-  } catch (err) { throw err; } finally {
+  } finally {
     if (didTurnAgentUp) { await killSshAgent(); }
   }
 }
@@ -103,11 +101,17 @@ async function pushTag(action, settings) {
   const push = !action.params.noPush;
   const username = parsers.string(action.params.username || settings.username);
   const email = parsers.string(action.params.email || settings.email);
-  if (!path || !tagName) { throw "Didn't provide one of the required parameters"; }
+
+  let didTurnAgentUp = false;
+
+  if (!path || !tagName) { throw new Error("Both Repository Path and Tag Name are required parameters."); }
 
   await setUsernameAndEmail(username, email, path);
 
-  const didTurnAgentUp = push && !isWin ? await turnSshAgentUp(await GitKey.fromRepoFolder(path)) : false;
+  if (push && !isWin) {
+    didTurnAgentUp = await turnSshAgentUp(await GitKey.fromRepoFolder(path));
+  }
+
   const tagArgs = ["tag"];
   if (message) {
     tagArgs.push("-a", tagName, `-m "${message}"`);
@@ -120,7 +124,7 @@ async function pushTag(action, settings) {
     results.tag = await execGitCommand(tagArgs, path);
     if (push) { results.push = await execGitCommand(["push origin", tagName], path); }
     return results;
-  } catch (err) { throw { ...results, err }; } finally {
+  } catch (err) { throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`); } finally {
     if (didTurnAgentUp) { await killSshAgent(); }
   }
 }
@@ -132,14 +136,14 @@ async function addCommit(action, settings) {
   const push = !action.params.noPush;
   const username = parsers.string(action.params.username || settings.username);
   const email = parsers.string(action.params.email || settings.email);
-  if (!path || !commitMessage) { throw "Didn't provide one of the required parameters"; }
+  if (!path || !commitMessage) { throw new Error("Both Repository Path and Commit Message are required parameters."); }
 
   await setUsernameAndEmail(username, email, path);
 
   let didTurnAgentUp = false;
   if (push && !isWin) {
     const gitKey = await GitKey.fromRepoFolder(path);
-    if (!gitKey || !gitKey.keyPath) { throw "Couldn't load ssh Key!"; }
+    if (!gitKey || !gitKey.keyPath) { throw new Error("Couldn't load ssh Key!"); }
     didTurnAgentUp = await turnSshAgentUp(gitKey);
   }
   const addArgs = ["add"]; const
@@ -151,7 +155,7 @@ async function addCommit(action, settings) {
     results.commit = await execGitCommand(commitArgs, path);
     if (push) { results.push = await execGitCommand(["push origin"], path); }
     return results;
-  } catch (err) { throw { ...results, err }; } finally {
+  } catch (err) { throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`); } finally {
     if (didTurnAgentUp) { await killSshAgent(); }
   }
 }
