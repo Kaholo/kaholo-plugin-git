@@ -1,7 +1,6 @@
 const fs = require("fs");
 const pathmodule = require("path");
 const { v4: uuidv4 } = require("uuid");
-const { execGitCommand } = require("./helpers");
 
 class GitKey {
   constructor(keyPath, saveCreds) {
@@ -46,6 +45,7 @@ class GitKey {
    */
   static async fromRepoFolder(path) {
     // require here and not in top of file to not make circular dependencies
+    const { execGitCommand } = require("./helpers"); // eslint-disable-line global-require
     if (!path) {
       throw new Error("Must provide repository path.");
     }

@@ -66,8 +66,11 @@ async function tryDelete(path) {
   try {
     const gitKey = await GitKey.fromRepoFolder(newpath);
     if (gitKey) { await gitKey.dispose(); }
-    fs.rmdirSync(newpath, { recursive: true });
-  } catch (err) { throw new Error(`Couldn't delete the repository: ${newpath}`); }
+  } catch (err) { } finally {
+    try {
+      fs.rmdirSync(newpath, { recursive: true });
+    } catch (err) { throw new Error(`Couldn't delete the repository: ${newpath}, ${err}`); }
+  }
   return true;
 }
 
@@ -78,7 +81,8 @@ async function turnSshAgentUp(gitKey) {
   if (!process.env.SSH_AUTH_SOCK) {
     // ssh agent is down so add command to turn it up and save returned env variables
     const sshAgentResult = await execCommand("ssh-agent");
-    const sshAgentResArray = sshAgentResult.replace(/\r?\n|\r/g, "").split(";").split("=");
+    // remove newlines and split using both ';' and '='
+    const sshAgentResArray = sshAgentResult.replace(/\r?\n|\r/g, "").split(/;|=/);
     [, process.env.SSH_AUTH_SOCK, , , process.env.SSH_AGENT_PID] = sshAgentResArray;
     didTurnAgentUp = true;
   }

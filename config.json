@@ -37,14 +37,15 @@
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
+          "required": false,
           "description": "SSH key taken from the vault items.",
-          "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
+          "required": false,
           "description": "Username with access rights to the repository.",
           "placeholder": "myusername"
         },
@@ -52,28 +53,32 @@
           "name": "password",
           "viewName": "Password",
           "type": "vault",
+          "required": false,
           "description": "For authentication with username and password, instead of SSH key."
         },
         {
           "name": "repo",
           "viewName": "Repository",
           "type": "string",
-          "description": "The repository shared URL.",
-          "placeholder": "git://host.xz[:port]/path/to/repo.git/",
+          "required": true,
+          "description": "The repository git or HTTPS URL.",
+          "placeholder": "git@github.com:Kaholo/kaholo-plugin-git.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
         {
           "name": "branch",
           "viewName": "Branch",
           "type": "string",
+          "required": false,
           "description": "The branch of the repository.",
-          "placeholder": "master",
+          "placeholder": "main",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
+          "required": true,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -82,6 +87,7 @@
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -121,8 +127,9 @@
           "name": "branch",
           "viewName": "Branch",
           "type": "string",
+          "required": false,
           "description": "The branch of the repository.",
-          "placeholder": "master",
+          "placeholder": "main",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
@@ -138,6 +145,7 @@
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
