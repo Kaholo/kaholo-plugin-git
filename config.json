@@ -169,7 +169,7 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the existing git repository to \"git pull\".",
+          "description": "Path of the existing git repository to \"git pull\"",
           "placeholder": "/home/username/reponame/",
           "learnUrl": "https://git-scm.com/docs/git-pull"
         },
@@ -208,46 +208,52 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the pulled git repository.",
+          "required": true,
+          "description": "Path of the existing git repository to \"git tag\"",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://git-scm.com/docs/git-pull"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username with access rights to the repository.",
+          "required": true,
+          "description": "Username - equivalent to git config user.name",
           "placeholder": "myusername",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "Email address of the authorised user.",
+          "required": true,
+          "description": "Email - equivalent to git config user.email",
           "placeholder": "my@email.com",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "tagName",
           "viewName": "Tag Name",
           "type": "string",
-          "description": "Tag name.",
-          "learnUrl": "https://git-scm.com/book/en/Git-Basics-Tagging",
-          "placeholder": "kaholo-server"
+          "required": true,
+          "description": "Tag name",
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "placeholder": "v0.1"
         },
         {
           "name": "message",
           "viewName": "Tag Message",
           "type": "string",
-          "description": "Description to tag name",
-          "placeholder": "Added new feature: ...",
+          "required": false,
+          "description": "Description for tag",
+          "placeholder": "20220409 Release v0.1 - Hungry Horse",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
+          "default": false,
           "description": "If true, don't push the tag created to the remote repository.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
         }
@@ -261,28 +267,34 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the pulled git repository.",
-          "placeholder": "/home/username/path/"
+          "required": true,
+          "description": "Path of the existing git repository in which to \"git commit\"",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username with access rights to the repository.",
-          "placeholder": "myusername"
+          "required": true,
+          "description": "Username - equivalent to git config user.name",
+          "placeholder": "myusername",
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "Email address of the authorised user.",
+          "required": true,
+          "description": "Email - equivalent to git config user.email",
           "placeholder": "my@email.com",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "commitMessage",
           "viewName": "Commit Message",
           "type": "string",
+          "required": true,
           "description": "Add a message while doing the commit.",
           "placeholder": "This_is_version_5",
           "learnUrl": "https://git-scm.com/docs/git-commit"
@@ -291,31 +303,33 @@
           "name": "override",
           "viewName": "Override Add Argumants",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the commit command.",
           "placeholder": "[-a | --interactive | --patch]",
-          "learnUrl": "https://git-scm.com/docs/git-push"
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
+          "default": false,
           "description": "Do not push the created tag to the remote repository.",
-          "learnUrl": "https://git-scm.com/docs/git-push",
-          "placeholder": "true/false"
+          "learnUrl": "https://git-scm.com/docs/git-push"
         }
       ]
     },
     {
       "name": "remove",
-      "viewName": "Remove And Clean Repository",
+      "viewName": "Remove Repository",
       "params": [
         {
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the git repository to delete.",
+          "required": true,
+          "description": "Path of the git repository to delete.",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://git-scm.com/docs/git-clean"
+          "learnUrl": "https://nodejs.org/api/fs.html#fsrmdirsyncpath-options"
         }
       ]
     }
