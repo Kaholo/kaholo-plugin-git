@@ -16,18 +16,27 @@ async function cloneUsingSsh(action, settings) {
   const {
     overwrite, sshKey, extraArgs, saveCreds, username, password,
   } = action.params;
-  if (!path || !repo) { throw new Error("Both Clone Path and Repository are required parameters."); }
   const privateKey = sshKey || settings.sshKey;
-  // delete directory if already exists
-  if (overwrite) { await tryDelete(path); }
-  // parse args
-  let gitKey = null;
-  if (username && password) {
-    if (!repo.startsWith("https://")) {
-      throw new Error("Username and password authentication can be used only for repository URLs in HTTPS format.");
+
+  // validate parameters
+  if (repo.startsWith("https://")) {
+    if (!username || !password ) {
+      throw new Error("Both username and password are requried parameters for private repository URLs in HTTPS format.");
     }
     repo = `${repo.slice(0, 8)}${username}:${password}@${repo.slice(8)}`;
+  } else {
+    if (username || password) {
+      throw new Error("Parameters Username and Password are used only for repository URLs in HTTPS format.");
+    }
+    if (!privateKey) {
+      throw new Error("SSH key is required for repository URLs NOT in HTTPS format.");
+    }
   }
+
+  // delete directory if already exists
+  if (overwrite) { await tryDelete(path); }
+  let gitKey = null;
+
   const args = ["clone", repo];
 
   if (branch) { args.push("-b", branch); }
@@ -63,7 +72,10 @@ async function clonePublic(action) {
   const branch = parsers.string(action.params.branch);
   const { overwrite, extraArgs } = action.params;
 
-  if (!path || !repo) { throw new Error("Both Clone Path and Repository are required parameters."); }
+  if (!repo.startsWith("https://")) {
+    throw new Error("Please use HTTPS format URL for public repositories. Anonymous SSH is not supported in method \"Clone public repository\".");
+  }
+
   if (overwrite) { await tryDelete(path); }
 
   const args = ["clone", repo];
