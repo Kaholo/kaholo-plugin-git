@@ -21,9 +21,9 @@
   "settings": [
     {
       "name": "sshKey",
-      "viewName": "SSH Key",
+      "viewName": "Default SSH Key",
       "type": "vault",
-      "description": "SSH key to be used as the default SSH key to authenticate to GitHub with.",
+      "description": "This SSH key will be used if no SSH key is specified at the individual Action level.",
       "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
       "learnUrl": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
     }
