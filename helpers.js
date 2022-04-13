@@ -3,7 +3,7 @@ const childProcess = require("child_process");
 const fs = require("fs");
 const { normalize } = require("path");
 const GitKey = require("./git-key");
-const compareVersion = require("./compare-versions");
+const compareVersion = require("compare-versions");
 
 const homeDirectory = os.homedir();
 const isWin = os.platform() === "win32";
