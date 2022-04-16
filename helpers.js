@@ -15,7 +15,7 @@ async function verifyGitVersion() {
   try {
     const gitResult = await execCommand("git --version");
     const gitVerNumArray = gitResult.split(" ")[2].trim().split(".");
-    gitVersion = `${gitVerNumArray[0]}.${gitVerNumArray[1]}.${gitVerNumArray[2]}`;
+    gitVersion = gitVerNumArray.slice(0, 3).join(".");
   } catch (err) {
     throw new Error(`Could not determine git version. error: ${err}`);
   }
@@ -29,7 +29,9 @@ async function verifyGitVersion() {
 async function execCommand(command, opts = {}) {
   let newopts = {};
   newopts = opts;
-  if (!newopts.env) { newopts.env = process.env; }
+  if (!newopts.env) {
+    newopts.env = process.env;
+  }
   return new Promise((resolve, reject) => {
     childProcess.exec(command, newopts, (error, stdout, stderr) => {
       if (error) {
@@ -62,20 +64,29 @@ function untildify(path) {
 
 async function tryDelete(path) {
   const newpath = normalize(untildify(path));
-  if (!fs.existsSync(newpath)) { return false; }
+  if (!fs.existsSync(newpath)) {
+    return false;
+  }
   try {
     const gitKey = await GitKey.fromRepoFolder(newpath);
-    if (gitKey) { await gitKey.dispose(); }
-  } catch (err) { } finally {
-    try {
-      fs.rmdirSync(newpath, { recursive: true });
-    } catch (err) { throw new Error(`Couldn't delete the repository: ${newpath}, ${err}`); }
+    if (gitKey) {
+      await gitKey.dispose();
+    }
+  } catch (err) {
+    // no problem
+  }
+  try {
+    fs.rmdirSync(newpath, { recursive: true });
+  } catch (err) {
+    // no problem
   }
   return true;
 }
 
 async function turnSshAgentUp(gitKey) {
-  if (isWin || !gitKey || !gitKey.keyPath) { return false; }
+  if (isWin || !gitKey || !gitKey.keyPath) {
+    return false;
+  }
   // check if ssh agent is down or up
   let didTurnAgentUp = false;
   if (!process.env.SSH_AUTH_SOCK) {
@@ -96,8 +107,12 @@ async function killSshAgent() {
 }
 
 async function setUsernameAndEmail(username, email, path) {
-  if (username) { await execGitCommand([`config user.name "${username}"`], path); }
-  if (email) { await execGitCommand([`config user.email "${email}"`], path); }
+  if (username) {
+    await execGitCommand([`config user.name "${username}"`], path);
+  }
+  if (email) {
+    await execGitCommand([`config user.email "${email}"`], path);
+  }
 }
 
 module.exports = {

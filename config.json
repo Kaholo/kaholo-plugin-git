@@ -236,9 +236,9 @@
           "viewName": "Tag Name",
           "type": "string",
           "required": true,
-          "description": "Tag name",
+          "description": "Tag name - should be of format v1.2.3",
           "learnUrl": "https://git-scm.com/docs/git-tag",
-          "placeholder": "v0.1"
+          "placeholder": "v1.0.2135"
         },
         {
           "name": "message",

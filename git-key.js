@@ -18,24 +18,16 @@ class GitKey {
       throw new Error("SSH key must be specified.");
     }
     let key = keyParam.replace(/\\n/g, "\n");
-    if (!key.endsWith("\n")) { key += "\n"; }
+    if (!key.endsWith("\n")) {
+      key += "\n";
+    }
 
     // Write private key to file
     const keyFileName = `git-key-${uuidv4()}.pem`;
     const keyPath = pathmodule.join(__dirname, keyFileName);
-    return new Promise((resolve, reject) => {
-      fs.writeFile(keyPath, key, (err) => {
-        if (err) { return reject(err); }
-        // Set key file permissions
-        fs.chmod(keyPath, "0400", (error) => {
-          if (error) { return reject(error); }
-          const gitKey = new GitKey(keyPath, saveCreds);
-          resolve(gitKey);
-          return null;
-        });
-        return null;
-      });
-    });
+    await fs.promises.writeFile(keyPath, key);
+    await fs.promises.chmod(keyPath, "0400");
+    return new GitKey(keyPath, saveCreds);
   }
 
   /**
@@ -51,26 +43,29 @@ class GitKey {
     }
     try {
       const sshCommand = await execGitCommand(["config --get core.sshCommand"], path);
-      if (!sshCommand) { return undefined; }
+      if (!sshCommand) {
+        return Promise.reject(new Error(`Couldn't run ssh config in ${path}.`));
+      }
       const matches = sshCommand.match(/-i ([^\n\r]+)/);
-      if (!matches) { return undefined; }
+      if (!matches) {
+        return Promise.reject(new Error("Couldn't any key in core.sshCommand."));
+      }
       const keyPath = matches[1].replace(/\\\\/g, "\\");
-      if (!keyPath) { return undefined; }
+      if (!keyPath) {
+        return Promise.reject(new Error("Couldn't format the path to the key."));
+      }
       return new GitKey(keyPath);
     } catch (err) {
-      return undefined;
+      console.error("Had problems finding the SSH key.");
     }
+    return Promise.reject(new Error("Somehow nothing was returned."));
   }
 
   async dispose() {
-    if (this.saveCreds) { return Promise.resolve(); }
-    const self = this;
-    return new Promise((resolve, reject) => {
-      fs.unlink(self.keyPath, (err) => {
-        if (err) { return reject(err); }
-        return resolve();
-      });
-    });
+    if (!this.saveCreds) {
+      await fs.promises.unlink(this.keyPath);
+    }
+    return Promise.resolve();
   }
 }
 
