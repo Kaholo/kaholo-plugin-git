@@ -70,7 +70,8 @@ async function cloneUsingSsh(action, settings) {
       didTurnAgentUp = await turnSshAgentUp(gitKey);
     }
     // run clone
-    return execGitCommand(args);
+    const cloneResult = await execGitCommand(args);
+    return cloneResult;
   } finally {
     if (didTurnAgentUp) {
       await killSshAgent();
