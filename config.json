@@ -5,8 +5,8 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.4.4",
-  "description": "Kaholo plugin for integration with Git.",
+  "version": "2.4.5",
+  "description": "Kaholo plugin for integration with Git",
   "category": "SOURCE CONTROL",
   "keywords": [
     "code",
@@ -21,9 +21,9 @@
   "settings": [
     {
       "name": "sshKey",
-      "viewName": "SSH Key",
+      "viewName": "Default SSH Key",
       "type": "vault",
-      "description": "SSH key to be used as the default SSH key to authenticate to GitHub with.",
+      "description": "This SSH key will be used if no SSH key is specified at the individual Action level.",
       "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
       "learnUrl": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
     }
@@ -37,14 +37,15 @@
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
+          "required": false,
           "description": "SSH key taken from the vault items.",
-          "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
+          "required": false,
           "description": "Username with access rights to the repository.",
           "placeholder": "myusername"
         },
@@ -52,28 +53,32 @@
           "name": "password",
           "viewName": "Password",
           "type": "vault",
+          "required": false,
           "description": "For authentication with username and password, instead of SSH key."
         },
         {
           "name": "repo",
           "viewName": "Repository",
           "type": "string",
-          "description": "The repository shared URL.",
-          "placeholder": "git://host.xz[:port]/path/to/repo.git/",
+          "required": true,
+          "description": "The repository git or HTTPS URL.",
+          "placeholder": "git@github.com:Kaholo/kaholo-plugin-git.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
         {
           "name": "branch",
           "viewName": "Branch",
           "type": "string",
+          "required": false,
           "description": "The branch of the repository.",
-          "placeholder": "master",
+          "placeholder": "main",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
+          "required": true,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -82,6 +87,7 @@
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -121,8 +127,9 @@
           "name": "branch",
           "viewName": "Branch",
           "type": "string",
+          "required": false,
           "description": "The branch of the repository.",
-          "placeholder": "master",
+          "placeholder": "main",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
@@ -138,6 +145,7 @@
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -160,33 +168,35 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the pulled git repository.",
-          "placeholder": "/home/username/path/",
+          "required": true,
+          "description": "Path of the existing git repository to \"git pull\"",
+          "placeholder": "/home/username/reponame/",
           "learnUrl": "https://git-scm.com/docs/git-pull"
         },
         {
           "name": "force",
-          "viewName": "Force Pull",
+          "viewName": "Force Fetch",
           "type": "boolean",
-          "description": "Email address of the authorised user.",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email",
-          "placeholder": "my@email.com"
+          "default": false,
+          "description": "-f  When git is used with <src>:<dst> refspec it may refuse to update the local branch. This overrides that check.",
+          "learnUrl": "https://git-scm.com/docs/git-pull"
         },
         {
           "name": "commitMerge",
           "viewName": "Commit Merge",
           "type": "boolean",
-          "description": "Description of the tag name for the repository.",
-          "learnUrl": "https://git-scm.com/docs/git-tag",
-          "placeholder": "this_is_my_tag_for_dev"
+          "default": true,
+          "description": "--commit, perform a commit if the merge succeeds (default git behavior)",
+          "learnUrl": "https://git-scm.com/docs/git-pull"
         },
         {
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
-          "description": "Tag the repository you want to pull.",
-          "learnUrl": "https://git-scm.com/docs/git-tag",
-          "placeholder": "Tag-1"
+          "required": false,
+          "description": "Any additional arguments you wish to pass to /usr/bin/git.",
+          "learnUrl": "https://git-scm.com/docs/git-pull",
+          "placeholder": "--dry-run --tags"
         }
       ]
     },
@@ -198,46 +208,52 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the pulled git repository.",
+          "required": true,
+          "description": "Path of the existing git repository to \"git tag\"",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://git-scm.com/docs/git-pull"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username with access rights to the repository.",
+          "required": true,
+          "description": "Username - equivalent to git config user.name",
           "placeholder": "myusername",
-          "learnUrl": "https://docs.docker.com/engine/reference/commandline/image_pull/"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "Email address of the authorised user.",
+          "required": true,
+          "description": "Email - equivalent to git config user.email",
           "placeholder": "my@email.com",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
+          "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "tagName",
           "viewName": "Tag Name",
           "type": "string",
-          "description": "Tag name.",
-          "learnUrl": "https://git-scm.com/book/en/Git-Basics-Tagging",
-          "placeholder": "kaholo-server"
+          "required": true,
+          "description": "Tag name - should be of format v1.2.3",
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "placeholder": "v1.0.2135"
         },
         {
           "name": "message",
           "viewName": "Tag Message",
           "type": "string",
-          "description": "Description to tag name",
-          "placeholder": "Added new feature: ...",
+          "required": false,
+          "description": "Description for tag",
+          "placeholder": "20220409 Release v0.1 - Hungry Horse",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
+          "default": false,
           "description": "If true, don't push the tag created to the remote repository.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
         }
@@ -251,28 +267,34 @@
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the pulled git repository.",
+          "required": true,
+          "description": "Path of the existing git repository in which to \"git commit\"",
           "placeholder": "/home/username/path/",
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "username",
           "viewName": "Username",
           "type": "string",
-          "description": "Username with access rights to the repository.",
+          "required": true,
+          "description": "Username - equivalent to git config user.name",
           "placeholder": "myusername",
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "email",
           "viewName": "Email",
           "type": "string",
-          "description": "Email address of the authorised user.",
+          "required": true,
+          "description": "Email - equivalent to git config user.email",
           "placeholder": "my@email.com",
-          "learnUrl": "https://git-scm.com/book/en/v2/Appendix-C:-Git-Commands-Email"
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "commitMessage",
           "viewName": "Commit Message",
           "type": "string",
+          "required": true,
           "description": "Add a message while doing the commit.",
           "placeholder": "This_is_version_5",
           "learnUrl": "https://git-scm.com/docs/git-commit"
@@ -281,31 +303,33 @@
           "name": "override",
           "viewName": "Override Add Argumants",
           "type": "text",
+          "required": false,
           "description": "Add arguments to the commit command.",
           "placeholder": "[-a | --interactive | --patch]",
-          "learnUrl": "https://git-scm.com/docs/git-push"
+          "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "noPush",
           "viewName": "Don't Push",
           "type": "boolean",
+          "default": false,
           "description": "Do not push the created tag to the remote repository.",
-          "learnUrl": "https://git-scm.com/docs/git-push",
-          "placeholder": "true/false"
+          "learnUrl": "https://git-scm.com/docs/git-push"
         }
       ]
     },
     {
       "name": "remove",
-      "viewName": "Remove And Clean Repository",
+      "viewName": "Remove Repository",
       "params": [
         {
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
-          "description": "Path of the folder that will contain the git repository to delete.",
+          "required": true,
+          "description": "Path of the git repository to delete.",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://git-scm.com/docs/git-clean"
+          "learnUrl": "https://nodejs.org/api/fs.html#fsrmdirsyncpath-options"
         }
       ]
     }
