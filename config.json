@@ -20,7 +20,10 @@
     "source",
     "control",
     "branch",
-    "github"
+    "github",
+    "push",
+    "pull",
+    "clone"
   ],
   "settings": [
     {
