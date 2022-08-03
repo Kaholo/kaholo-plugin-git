@@ -85,7 +85,7 @@
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
-          "required": true,
+          "required": false,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -143,7 +143,7 @@
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
-          "required": true,
+          "required": false,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
