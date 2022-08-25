@@ -41,29 +41,34 @@ class GitKey {
     if (!path) {
       throw new Error("Must provide repository path.");
     }
+
     try {
       const sshCommand = await execGitCommand(["config --get core.sshCommand"], path);
       if (!sshCommand) {
-        return Promise.reject(new Error(`Couldn't run ssh config in ${path}.`));
+        throw new Error(`Couldn't run ssh config in ${path}.`);
       }
+
       const matches = sshCommand.match(/-i ([^\n\r]+)/);
       if (!matches) {
-        return Promise.reject(new Error("Couldn't any key in core.sshCommand."));
+        throw new Error("Couldn't any key in core.sshCommand.");
       }
+
       const keyPath = matches[1].replace(/\\\\/g, "\\");
       if (!keyPath) {
-        return Promise.reject(new Error("Couldn't format the path to the key."));
+        throw new Error("Couldn't format the path to the key.");
       }
+
       return new GitKey(keyPath);
     } catch (err) {
       console.error("Had problems finding the SSH key.");
     }
-    return Promise.reject(new Error("Somehow nothing was returned."));
+
+    throw new Error("Unknown error has occurred, make sure all your parameters are valid.");
   }
 
-  async dispose() {
+  dispose() {
     if (!this.saveCreds) {
-      await fs.promises.unlink(this.keyPath);
+      return fs.promises.unlink(this.keyPath);
     }
     return Promise.resolve();
   }

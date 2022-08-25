@@ -95,6 +95,7 @@
           "viewName": "Additional Arguments",
           "type": "text",
           "required": false,
+          "parserType": "array",
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -153,6 +154,7 @@
           "viewName": "Additional Arguments",
           "type": "text",
           "required": false,
+          "parserType": "array",
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -310,9 +312,10 @@
           "name": "override",
           "viewName": "Override Add Argumants",
           "type": "text",
+          "parserType": "array",
           "required": false,
           "description": "Add arguments to the commit command.",
-          "placeholder": "[-a | --interactive | --patch]",
+          "placeholder": "-a\n--interactive\n--patch",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
