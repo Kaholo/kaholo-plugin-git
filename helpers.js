@@ -40,13 +40,11 @@ async function execCommand(command, opts = {}) {
         console.error(`${stdout}`);
         return reject(error);
       }
-
-      let resolvedStdout = stdout;
-      if (stderr && !resolvedStdout) {
-        resolvedStdout = `${stderr}\nSuccess!`;
+      if (stderr && !stdout) {
+        return reject(stderr);
       }
 
-      return resolve(resolvedStdout);
+      return resolve(stdout);
     });
   });
 }
