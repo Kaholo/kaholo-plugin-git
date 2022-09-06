@@ -1,7 +1,5 @@
-# kaholo-plugin-git
-Git plugin for Kaholo. 
-
-This plugin is a wrapper for the git cli. The git cli must be installed on the agent for this to work. The git version must be equal or higher than 2.10.0, because the `core.sshCommand` configuration feature is used.
+# Kaholo Git Plugin
+This plugin enables Kaholo to use Git. Git is free and open source software for distributed version control. The plugin makes use of the Git CLI, meaning git must be installed on the Kaholo agent for this to work.
 
 ## Authentication
 You can choose one of the two authentication methods:
