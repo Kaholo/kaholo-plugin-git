@@ -1,4 +1,5 @@
 const kaholoPluginLibrary = require("@kaholo/plugin-library");
+const { resolve: resolvePath } = require("path");
 
 const GitKey = require("./git-key");
 const {
@@ -31,7 +32,7 @@ async function cloneUsingSsh(params) {
   let validRepoUrl = null;
   if (repo.startsWith("https://")) {
     if (!username || !password) {
-      throw new Error("Both username and password are requried parameters for private repository URLs in HTTPS format.");
+      throw new Error("Both username and password are required parameters for private repository URLs in HTTPS format.");
     }
     validRepoUrl = `https://${username}:${password}@${repo.slice(8)}`;
   } else {
@@ -95,12 +96,14 @@ async function clonePublic(params) {
     extraArgs,
   } = params;
 
+  const resolvedPath = resolvePath(path ?? ".");
+
   if (!repo.startsWith("https://")) {
     throw new Error("Please use HTTPS format URL for public repositories. Anonymous SSH is not supported in method \"Clone public repository\".");
   }
 
   if (overwrite) {
-    await tryDelete(path);
+    await tryDelete(resolvedPath);
   }
 
   const args = ["clone", repo];
@@ -110,7 +113,7 @@ async function clonePublic(params) {
   if (extraArgs) {
     args.push(...extraArgs);
   }
-  args.push(path);
+  args.push(resolvedPath);
 
   return execGitCommand(args);
 }
