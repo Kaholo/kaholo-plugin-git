@@ -2,6 +2,7 @@ const compareVersion = require("compare-versions");
 const childProcess = require("child_process");
 const os = require("os");
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const { normalize } = require("path");
 
 const GitKey = require("./git-key");
@@ -37,14 +38,15 @@ async function execCommand(command, opts = {}) {
   return new Promise((resolve, reject) => {
     childProcess.exec(command, resolvedOptions, (error, stdout, stderr) => {
       if (error) {
-        console.error(`${stdout}`);
+        console.error(stdout);
         return reject(error);
       }
-      if (stderr && !stdout) {
-        return reject(stderr);
-      }
 
-      return resolve(stdout);
+      let newStdout = stdout;
+      if (stderr && !stdout) {
+        newStdout = `${stderr}\nSuccess!`;
+      }
+      return resolve(newStdout);
     });
   });
 }
@@ -67,23 +69,26 @@ function untildify(path) {
 }
 
 async function tryDelete(path) {
-  const newpath = normalize(untildify(path));
-  if (!fs.existsSync(newpath)) {
+  const newPath = normalize(untildify(path));
+  if (!fs.existsSync(newPath)) {
     return false;
   }
+
   try {
-    const gitKey = await GitKey.fromRepoFolder(newpath);
+    const gitKey = await GitKey.fromRepoFolder(newPath);
     if (gitKey) {
       await gitKey.dispose();
     }
   } catch (err) {
     // no problem
   }
+
   try {
-    fs.rmdirSync(newpath, { recursive: true });
+    await fsExtra.emptyDir(newPath, { recursive: true });
   } catch (err) {
     // no problem
   }
+
   return true;
 }
 
