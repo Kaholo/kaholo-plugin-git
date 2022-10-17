@@ -32,7 +32,7 @@ async function cloneUsingSsh(params) {
   } = params;
 
   // validate parameters
-  let validRepoUrl = null;
+  let validRepoUrl = repo;
   if (repo.startsWith("https://")) {
     if (!username || !password) {
       throw new Error("Both username and password are required parameters for private repository URLs in HTTPS format.");
