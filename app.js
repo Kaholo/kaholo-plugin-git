@@ -1,4 +1,8 @@
 const kaholoPluginLibrary = require("@kaholo/plugin-library");
+const {
+  basename,
+  resolve: resolvePath,
+} = require("path");
 
 const GitKey = require("./git-key");
 const {
@@ -28,10 +32,10 @@ async function cloneUsingSsh(params) {
   } = params;
 
   // validate parameters
-  let validRepoUrl = null;
+  let validRepoUrl = repo;
   if (repo.startsWith("https://")) {
     if (!username || !password) {
-      throw new Error("Both username and password are requried parameters for private repository URLs in HTTPS format.");
+      throw new Error("Both username and password are required parameters for private repository URLs in HTTPS format.");
     }
     validRepoUrl = `https://${username}:${password}@${repo.slice(8)}`;
   } else {
@@ -43,9 +47,12 @@ async function cloneUsingSsh(params) {
     }
   }
 
+  const repoDirectoryName = path ? basename(path) : basename(repo).replace(/\.git$/, "");
+  const resolvedPath = resolvePath(path ?? repoDirectoryName);
+
   // delete directory if already exists
   if (overwrite) {
-    await tryDelete(path);
+    await tryDelete(resolvedPath);
   }
 
   const args = ["clone", validRepoUrl];
@@ -63,7 +70,7 @@ async function cloneUsingSsh(params) {
   if (extraArgs) {
     args.push(...extraArgs);
   }
-  args.push(path);
+  args.push(resolvedPath);
 
   // clone using key file
   let didTurnAgentUp = false;
@@ -95,12 +102,15 @@ async function clonePublic(params) {
     extraArgs,
   } = params;
 
+  const repoDirectoryName = path ? basename(path) : basename(repo).replace(/\.git$/, "");
+  const resolvedPath = resolvePath(path ?? repoDirectoryName);
+
   if (!repo.startsWith("https://")) {
     throw new Error("Please use HTTPS format URL for public repositories. Anonymous SSH is not supported in method \"Clone public repository\".");
   }
 
   if (overwrite) {
-    await tryDelete(path);
+    await tryDelete(resolvedPath);
   }
 
   const args = ["clone", repo];
@@ -110,7 +120,7 @@ async function clonePublic(params) {
   if (extraArgs) {
     args.push(...extraArgs);
   }
-  args.push(path);
+  args.push(resolvedPath);
 
   return execGitCommand(args);
 }
