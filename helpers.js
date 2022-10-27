@@ -1,15 +1,18 @@
-const os = require("os");
-const childProcess = require("child_process");
-const fs = require("fs");
-const { normalize } = require("path");
 const compareVersion = require("compare-versions");
+const childProcess = require("child_process");
+const os = require("os");
+const fs = require("fs");
+const fsExtra = require("fs-extra");
+const { normalize } = require("path");
+
 const GitKey = require("./git-key");
 
 const homeDirectory = os.homedir();
 const isWin = os.platform() === "win32";
 
+const MINIMAL_GIT_VERSION_REQUIRED = "2.10.0";
+
 async function verifyGitVersion() {
-  const minimalGitRequired = "2.10.0";
   let gitVersion;
 
   try {
@@ -20,41 +23,44 @@ async function verifyGitVersion() {
     throw new Error(`Could not determine git version. error: ${err}`);
   }
 
-  const isValidGitVersion = compareVersion.compare(gitVersion, minimalGitRequired, ">=");
+  const isValidGitVersion = compareVersion.compare(gitVersion, MINIMAL_GIT_VERSION_REQUIRED, ">=");
   if (!isValidGitVersion) {
-    throw new Error(`Git version must be ${minimalGitRequired} or higher, got ${gitVersion}`);
+    throw new Error(`Git version must be ${MINIMAL_GIT_VERSION_REQUIRED} or higher, got ${gitVersion}`);
   }
 }
 
 async function execCommand(command, opts = {}) {
-  let newopts = {};
-  newopts = opts;
-  if (!newopts.env) {
-    newopts.env = process.env;
+  const resolvedOptions = opts;
+  if (!resolvedOptions.env) {
+    resolvedOptions.env = process.env;
   }
+
   return new Promise((resolve, reject) => {
-    childProcess.exec(command, newopts, (error, stdout, stderr) => {
+    childProcess.exec(command, resolvedOptions, (error, stdout, stderr) => {
       if (error) {
-        console.log(`${stdout}`);
+        console.error(stdout);
         return reject(error);
       }
-      let newstdout = stdout;
-      if (stderr && !newstdout) {
-        newstdout = `${stderr}\nSuccess!`;
+
+      let newStdout = stdout;
+      if (stderr && !stdout) {
+        newStdout = `${stderr}\nSuccess!`;
       }
-      return resolve(newstdout);
+      return resolve(newStdout);
     });
   });
 }
 
 async function execGitCommand(args, path) {
   const opts = path ? { cwd: path } : {};
+
   return execCommand(`git ${args.join(" ")}`, opts);
 }
 
 async function getSSHCommand(privateKey, saveCreds) {
   const gitKey = await GitKey.from(privateKey, saveCreds);
   const keyPathParam = isWin ? gitKey.keyPath.replace(/\\/g, "\\\\") : gitKey.keyPath;
+
   return [gitKey, `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyPathParam}`];
 }
 
@@ -63,23 +69,26 @@ function untildify(path) {
 }
 
 async function tryDelete(path) {
-  const newpath = normalize(untildify(path));
-  if (!fs.existsSync(newpath)) {
+  const newPath = normalize(untildify(path));
+  if (!fs.existsSync(newPath)) {
     return false;
   }
+
   try {
-    const gitKey = await GitKey.fromRepoFolder(newpath);
+    const gitKey = await GitKey.fromRepoFolder(newPath);
     if (gitKey) {
       await gitKey.dispose();
     }
   } catch (err) {
     // no problem
   }
+
   try {
-    fs.rmdirSync(newpath, { recursive: true });
+    await fsExtra.emptyDir(newPath, { recursive: true });
   } catch (err) {
     // no problem
   }
+
   return true;
 }
 

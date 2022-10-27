@@ -5,7 +5,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.4.6",
+  "version": "2.5.0",
   "description": "Git Distributed Version Control System",
   "category": "Source Control",
   "keywords": [
@@ -85,7 +85,7 @@
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
-          "required": true,
+          "required": false,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -95,6 +95,7 @@
           "viewName": "Additional Arguments",
           "type": "text",
           "required": false,
+          "parserType": "array",
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -143,7 +144,7 @@
           "name": "path",
           "viewName": "Clone Path",
           "type": "string",
-          "required": true,
+          "required": false,
           "description": "Folder path for the cloned repository.",
           "placeholder": "/home/user/clone_path/",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -153,6 +154,7 @@
           "viewName": "Additional Arguments",
           "type": "text",
           "required": false,
+          "parserType": "array",
           "description": "Add arguments to the git command.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
@@ -310,9 +312,10 @@
           "name": "override",
           "viewName": "Override Add Argumants",
           "type": "text",
+          "parserType": "array",
           "required": false,
           "description": "Add arguments to the commit command.",
-          "placeholder": "[-a | --interactive | --patch]",
+          "placeholder": "-a\n--interactive\n--patch",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
