@@ -5,7 +5,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Git Distributed Version Control System",
   "category": "Source Control",
   "keywords": [
