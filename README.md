@@ -3,9 +3,11 @@ This plugin enables Kaholo to use Git. Git is free and open source software for 
 
 ## Authentication
 You can choose one of the two authentication methods:
-1. ```SSH key``` - must be added and stored in the Kaholo Vault. 
+1. `SSH key` - must be stored in the Kaholo Vault.
 
-2. ```Username``` + ```password``` - must be added and stored in the Kaholo Vault. This works only with HTTPS git repo URLs.
+2. `Username` + `password` - password must be stored in the Kaholo Vault. This works only with HTTPS git repo URLs.
+
+3. For Github, support for password authentication was removed on August 13, 2021. In place of password put your personal access token (PAT) instead. You can generate a PAT for yourself in Github's `<> Developer settings`.
 
 ### Public repositories
 Public repositories can be cloned without providing credentials. It is only required to specify the URL of the repository and the local folder path in which to clone. Please use only HTTPS repo URLs for public repositories. Anonymous SSH is not supported by the plugin, nor is it supported by popular git-based repo providers.

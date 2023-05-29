@@ -60,7 +60,7 @@ class GitKey {
 
       return new GitKey(keyPath);
     } catch (err) {
-      console.error("Had problems finding the SSH key.");
+      console.error("No SSH key is in use for this repo.");
     }
 
     throw new Error("Unknown error has occurred, make sure all your parameters are valid.");
