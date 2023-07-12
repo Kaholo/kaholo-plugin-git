@@ -219,7 +219,7 @@ async function addCommit(params) {
 
   const addArgs = ["add"];
   const commitArgs = [`commit -a -m "${commitMessage}"`];
-  if (overrideAdd.length > 0) {
+  if (overrideAdd?.length > 0) {
     addArgs.push(...overrideAdd);
   } else {
     addArgs.push("-A");
