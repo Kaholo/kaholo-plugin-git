@@ -257,11 +257,11 @@
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
-          "name": "noPush",
-          "viewName": "Don't Push",
+          "name": "push",
+          "viewName": "Push Tag to Origin",
           "type": "boolean",
-          "default": false,
-          "description": "Tag locally but do not push to the remote repository.",
+          "default": true,
+          "description": "Push the tag to the remote repository.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
         }
       ]
@@ -317,11 +317,11 @@
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
-          "name": "noPush",
-          "viewName": "Don't Push",
+          "name": "push",
+          "viewName": "Push Commit to Origin",
           "type": "boolean",
-          "default": false,
-          "description": "Make commit but do not push to the remote repository.",
+          "default": true,
+          "description": "Push the local commit to the remote repository.",
           "learnUrl": "https://git-scm.com/docs/git-push"
         }
       ]
