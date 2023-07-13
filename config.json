@@ -31,21 +31,20 @@
       "viewName": "Default SSH Key",
       "type": "vault",
       "description": "This SSH key will be used if no SSH key is specified at the individual Action level.",
-      "placeholder": "ddQ6/B6wxV2OaN0m8EeMuz0deCmbayVX+n5k7Z5LfPO",
       "learnUrl": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
     }
   ],
   "methods": [
     {
       "name": "cloneUsingSsh",
-      "viewName": "Clone private repository",
+      "viewName": "Clone Private Repository",
       "params": [
         {
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
           "required": false,
-          "description": "SSH key taken from the vault items.",
+          "description": "SSH key to use for authentication, if not username and password",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
         {
@@ -53,7 +52,7 @@
           "viewName": "Username",
           "type": "string",
           "required": false,
-          "description": "Username with access rights to the repository.",
+          "description": "Username for authentication if not by SSH key",
           "placeholder": "myusername"
         },
         {
@@ -61,14 +60,14 @@
           "viewName": "Password",
           "type": "vault",
           "required": false,
-          "description": "For authentication with username and password, instead of SSH key."
+          "description": "Password or Token for authentication if not by SSH key"
         },
         {
           "name": "repo",
           "viewName": "Repository",
           "type": "string",
           "required": true,
-          "description": "The repository git or HTTPS URL.",
+          "description": "The repository URL, git or HTTPS format",
           "placeholder": "git@github.com:Kaholo/kaholo-plugin-git.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
@@ -77,8 +76,8 @@
           "viewName": "Branch",
           "type": "string",
           "required": false,
-          "description": "The branch of the repository.",
-          "placeholder": "main",
+          "description": "Specify a branch to checkout if not master/main",
+          "placeholder": "develop",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
@@ -86,8 +85,8 @@
           "viewName": "Clone Path",
           "type": "string",
           "required": false,
-          "description": "Folder path for the cloned repository.",
-          "placeholder": "/home/user/clone_path/",
+          "description": "Directory to clone into, if not same as repo name",
+          "placeholder": "myrepo_develop",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
         {
@@ -96,7 +95,7 @@
           "type": "text",
           "required": false,
           "parserType": "array",
-          "description": "Add arguments to the git command.",
+          "description": "Optional additional arguments for the git command",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -104,31 +103,30 @@
           "name": "overwrite",
           "viewName": "Overwrite If Exists",
           "type": "boolean",
-          "description": "Overwriting the clone onto the provided path.",
-          "learnUrl": "https://git-scm.com/docs/git-clone",
-          "placeholder": "true/false"
+          "default": true,
+          "description": "If clone path already exists, enable to delete and reclone",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
         },
         {
           "name": "saveCreds",
           "viewName": "Save Credentials",
           "type": "boolean",
-          "description": "Saving the SSH key for the usage of pull/push/tag/add/commit.",
-          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server",
-          "placeholder": "e.g."
+          "description": "Store credentials on the Kaholo agent for downstream pull/push/tag/add/commit actions",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server"
         }
       ]
     },
     {
       "name": "clonePublic",
-      "viewName": "Clone public repository",
+      "viewName": "Clone Public Repository",
       "params": [
         {
           "name": "repo",
           "viewName": "Repository",
           "type": "string",
           "required": true,
-          "description": "The repository shared URL.",
-          "placeholder": "git://host.xz[:port]/path/to/repo.git/",
+          "description": "The HTTPS format repository URL",
+          "placeholder": "https://github.com/myuser/myrepo.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
         {
@@ -136,8 +134,8 @@
           "viewName": "Branch",
           "type": "string",
           "required": false,
-          "description": "The branch of the repository.",
-          "placeholder": "main",
+          "description": "Specify a branch to checkout if not master/main",
+          "placeholder": "develop",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
         {
@@ -145,8 +143,8 @@
           "viewName": "Clone Path",
           "type": "string",
           "required": false,
-          "description": "Folder path for the cloned repository.",
-          "placeholder": "/home/user/clone_path/",
+          "description": "Directory to clone into, if not same as repo name",
+          "placeholder": "myrepo_develop",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
         {
@@ -155,7 +153,7 @@
           "type": "text",
           "required": false,
           "parserType": "array",
-          "description": "Add arguments to the git command.",
+          "description": "Optional additional arguments for the git command",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -163,9 +161,9 @@
           "name": "overwrite",
           "viewName": "Overwrite If Exists",
           "type": "boolean",
-          "description": "Overwriting the clone onto the provided path.",
-          "learnUrl": "https://git-scm.com/docs/git-clone",
-          "placeholder": "true/false"
+          "default": true,
+          "description": "If clone path already exists, enable to delete and reclone",
+          "learnUrl": "https://git-scm.com/docs/git-clone"
         }
       ]
     },
@@ -263,7 +261,7 @@
           "viewName": "Don't Push",
           "type": "boolean",
           "default": false,
-          "description": "If true, don't push the tag created to the remote repository.",
+          "description": "Tag locally but do not push to the remote repository.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
         }
       ]
@@ -278,7 +276,7 @@
           "type": "string",
           "required": true,
           "description": "Path of the existing git repository in which to \"git commit\"",
-          "placeholder": "/home/username/path/",
+          "placeholder": "myrepo_develop",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
@@ -304,7 +302,7 @@
           "viewName": "Commit Message",
           "type": "string",
           "required": true,
-          "description": "Add a message while doing the commit.",
+          "description": "The message for the commit",
           "placeholder": "This_is_version_5",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
@@ -323,7 +321,7 @@
           "viewName": "Don't Push",
           "type": "boolean",
           "default": false,
-          "description": "Do not push the created tag to the remote repository.",
+          "description": "Make commit but do not push to the remote repository.",
           "learnUrl": "https://git-scm.com/docs/git-push"
         }
       ]
@@ -337,8 +335,8 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the git repository to delete.",
-          "placeholder": "/home/username/path/",
+          "description": "Path of the directory to delete.",
+          "placeholder": "myrepo_test",
           "learnUrl": "https://nodejs.org/api/fs.html#fsrmdirsyncpath-options"
         }
       ]
