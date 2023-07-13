@@ -137,5 +137,4 @@ dist
 *.zip
 
 # lock files
-package-lock.json
 yarn.lock
