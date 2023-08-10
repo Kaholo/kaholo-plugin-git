@@ -106,13 +106,6 @@
           "default": true,
           "description": "If clone path already exists, enable to delete and reclone",
           "learnUrl": "https://git-scm.com/docs/git-clone"
-        },
-        {
-          "name": "saveCreds",
-          "viewName": "Save Credentials",
-          "type": "boolean",
-          "description": "Store credentials on the Kaholo agent for downstream pull/push/tag/add/commit actions",
-          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server"
         }
       ]
     },
@@ -172,6 +165,14 @@
       "viewName": "Pull",
       "params": [
         {
+          "name": "sshKey",
+          "viewName": "SSH Key",
+          "type": "vault",
+          "required": false,
+          "description": "SSH key to use for authentication, if not username and password",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
+        },
+        {
           "name": "path",
           "viewName": "Repository Path",
           "type": "string",
@@ -211,6 +212,14 @@
       "name": "pushTag",
       "viewName": "Push Tag",
       "params": [
+        {
+          "name": "sshKey",
+          "viewName": "SSH Key",
+          "type": "vault",
+          "required": false,
+          "description": "SSH key to use for authentication, if not username and password",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
+        },
         {
           "name": "path",
           "viewName": "Repository Path",
@@ -270,6 +279,14 @@
       "name": "addCommit",
       "viewName": "Add Commit And Push",
       "params": [
+        {
+          "name": "sshKey",
+          "viewName": "SSH Key",
+          "type": "vault",
+          "required": false,
+          "description": "SSH key to use for authentication, if not username and password",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
+        },
         {
           "name": "path",
           "viewName": "Repository Path",
