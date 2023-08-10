@@ -5,7 +5,12 @@ const { execGitCommand } = require("./git-helpers");
 const { shredFile } = require("./fs-helpers");
 
 /**
- *
+ * This function intercepts the SSH Key from passed params
+ * writes the key to the temporary file, sets
+ * a proper SSH command for Git usage, and runs a
+ * callback function. After running the callback,
+ * it cleans up: shreds the SSH Key file on the disk,
+ * and restores the initial core.sshComand config in Git
  */
 function provideSshPrivateKeyPath(options) {
   const {
@@ -30,7 +35,7 @@ function provideSshPrivateKeyPath(options) {
     }
 
     if (useGlobalSshCommand) {
-      originalSshCommand = await execGitCommand(["config", "--global", "--get", "core.sshCommand"]).catch(() => {}) || ""; // ignore errors
+      originalSshCommand = await execGitCommand(["config", "--global", "--get", "core.sshCommand"]).catch(() => {}); // ignore errors
     }
 
     // We need better API in kaholo-plugin-library for these kind of operations
@@ -62,8 +67,10 @@ function provideSshPrivateKeyPath(options) {
       },
     );
 
-    if (useGlobalSshCommand && originalSshCommand) {
+    if (originalSshCommand) {
       await execGitCommand(["config", "--global", "core.sshCommand", JSON.stringify(originalSshCommand)]);
+    } else if (useGlobalSshCommand) {
+      await execGitCommand(["config", "--global", "--unset", "core.sshCommand"]);
     }
 
     if (error) {
