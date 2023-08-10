@@ -1,8 +1,8 @@
 const fs = require("fs-extra");
 const kaholoPluginLibrary = require("@kaholo/plugin-library");
 
-const { execGitCommand } = require("./helpers/git-helpers");
-const { shredFile } = require("./helpers/fs-helpers");
+const { execGitCommand } = require("./git-helpers");
+const { shredFile } = require("./fs-helpers");
 
 /**
  *

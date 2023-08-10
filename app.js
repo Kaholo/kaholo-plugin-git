@@ -5,14 +5,14 @@ const {
   execGitCommand,
   setUsernameAndEmail,
   resolveClonePath,
-} = require("./helpers/git-helpers");
+} = require("./git-helpers");
 const {
   tryDeleteDirectoryRecursively,
-} = require("./helpers/fs-helpers");
+} = require("./fs-helpers");
 const {
   startSshAgent,
   tryKillSshAgent,
-} = require("./helpers/ssh-helpers");
+} = require("./ssh-helpers");
 
 const {
   prepareGitArgsForClonePrivateRepository,
@@ -85,7 +85,7 @@ async function pull(params) {
 
   try {
     await startSshAgent();
-    return execGitCommand(args, path);
+    return await execGitCommand(args, path);
   } finally {
     await tryKillSshAgent();
   }
