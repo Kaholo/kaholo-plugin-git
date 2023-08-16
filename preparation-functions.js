@@ -25,7 +25,7 @@ function provideSshPrivateKeyPath(options) {
   let originalSshCommand;
 
   return async (params) => {
-    if (!params.sshKey) {
+    if (!params[sourceKeyName]) {
       return callback(params);
     }
 
