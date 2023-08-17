@@ -64,7 +64,7 @@ async function clonePublic(params) {
   } = params;
 
   await verifyGitVersion();
-  validateParamsForPublicClone();
+  validateParamsForPublicClone(params);
   const clonePath = resolveClonePath(path, repo);
 
   if (overwrite) {
