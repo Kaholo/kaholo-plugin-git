@@ -279,6 +279,7 @@
           "description": "Path of the existing git repository to \"git tag\"",
           "placeholder": "/home/username/path/",
           "learnUrl": "https://git-scm.com/docs/git-tag",
+          "parserType": "filePath",
           "parserOptions": {
             "throwIfDoesntExist": true,
             "acceptedTypes": [

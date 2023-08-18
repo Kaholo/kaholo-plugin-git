@@ -113,6 +113,7 @@ async function tag(params) {
       results.push = await push({
         repository: path,
         remote: "origin",
+        branch: tagName,
       });
     }
 
@@ -128,7 +129,7 @@ async function commit(params) {
     commitMessage,
     username,
     email,
-    push: pushFlag,
+    pushFlag,
     overrideAdd,
   } = params;
 
