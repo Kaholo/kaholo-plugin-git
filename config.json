@@ -30,7 +30,7 @@
       "name": "sshKey",
       "viewName": "Default SSH Key",
       "type": "vault",
-      "description": "This SSH key will be used if no SSH key is specified at the individual Action level.",
+      "description": "Specify SSH Key to automatically populate SSH Key parameter in new actions",
       "learnUrl": "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
     }
   ],
@@ -67,7 +67,7 @@
           "viewName": "Repository",
           "type": "string",
           "required": true,
-          "description": "The repository URL, git or HTTPS format",
+          "description": "Repository's URI or HTTPS URL",
           "placeholder": "git@github.com:Kaholo/kaholo-plugin-git.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
@@ -85,7 +85,7 @@
           "viewName": "Clone Path",
           "type": "string",
           "required": false,
-          "description": "Directory to clone into, if not same as repo name",
+          "description": "Optional directory for cloning - if not specified, repository name is used",
           "placeholder": "myrepo_develop",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -95,7 +95,7 @@
           "type": "text",
           "required": false,
           "parserType": "array",
-          "description": "Optional additional arguments for the git command",
+          "description": "Optional additional arguments for the git command, one per line.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -104,7 +104,7 @@
           "viewName": "Overwrite If Exists",
           "type": "boolean",
           "default": true,
-          "description": "If clone path already exists, enable to delete and reclone",
+          "description": "If clone path already exists, delete it before cloning",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         }
       ]
@@ -118,7 +118,7 @@
           "viewName": "Repository",
           "type": "string",
           "required": true,
-          "description": "The HTTPS format repository URL",
+          "description": "Repository's HTTPS URL",
           "placeholder": "https://github.com/myuser/myrepo.git",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
         },
@@ -127,7 +127,7 @@
           "viewName": "Branch",
           "type": "string",
           "required": false,
-          "description": "Specify a branch to checkout if not master/main",
+          "description": "Specify a branch to check out if not master/main",
           "placeholder": "develop",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
         },
@@ -136,7 +136,7 @@
           "viewName": "Clone Path",
           "type": "string",
           "required": false,
-          "description": "Directory to clone into, if not same as repo name",
+          "description": "Optional directory for cloning - if not specified, repository name is used",
           "placeholder": "myrepo_develop",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -146,7 +146,7 @@
           "type": "text",
           "required": false,
           "parserType": "array",
-          "description": "Optional additional arguments for the git command",
+          "description": "Optional additional arguments for the git command, one per line.",
           "placeholder": "--quiet",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         },
@@ -155,7 +155,7 @@
           "viewName": "Overwrite If Exists",
           "type": "boolean",
           "default": true,
-          "description": "If clone path already exists, enable to delete and reclone",
+          "description": "If clone path already exists, delete it before cloning",
           "learnUrl": "https://git-scm.com/docs/git-clone"
         }
       ]
@@ -177,8 +177,8 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the existing git repository to \"git pull\"",
-          "placeholder": "/home/username/reponame/",
+          "description": "Path of an existing git repository on Kaholo agent in which to \"git pull\"",
+          "placeholder": "reponame",
           "learnUrl": "https://git-scm.com/docs/git-pull",
           "parserType": "filePath",
           "parserOptions": {
@@ -208,10 +208,11 @@
           "name": "extraArgs",
           "viewName": "Additional Arguments",
           "type": "text",
+          "parserType": "array",
           "required": false,
-          "description": "Any additional arguments you wish to pass to /usr/bin/git.",
+          "description": "Optional additional arguments for the git command, one per line.",
           "learnUrl": "https://git-scm.com/docs/git-pull",
-          "placeholder": "--dry-run --tags"
+          "placeholder": "--dry-run\n--tags"
         }
       ]
     },
@@ -224,8 +225,8 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the existing git repository to \"git push\"",
-          "placeholder": "/home/username/path/",
+          "description": "Path of an existing git repository on Kaholo Agent in which to \"git push\"",
+          "placeholder": "reponame",
           "learnUrl": "https://git-scm.com/docs/git-tag",
           "parserType": "filePath",
           "parserOptions": {
@@ -238,7 +239,7 @@
         {
           "name": "remote",
           "viewName": "Remote",
-          "description": "Name of the remote repository to push to.",
+          "description": "Name of the remote repository to which to push",
           "type": "string",
           "required": true,
           "default": "origin"
@@ -246,7 +247,7 @@
         {
           "name": "branch",
           "viewName": "Branch",
-          "description": "Name of the branch to push. If left empty, the checked out branch is pushed.",
+          "description": "Name of the branch to push - If left empty, the branch currently checked out is pushed.",
           "type": "string"
         },
         {
@@ -262,7 +263,7 @@
           "type": "text",
           "parserType": "array",
           "description": "Optional additional arguments for the git command, one per line.",
-          "placeholder": "--quiet",
+          "placeholder": "--quiet\n--prune",
           "learnUrl": "https://git-scm.com/docs/git-push"
         }
       ]
@@ -276,8 +277,8 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the existing git repository to \"git tag\"",
-          "placeholder": "/home/username/path/",
+          "description": "Path of an existing git repository on Kaholo Agent in which to \"git tag\"",
+          "placeholder": "reponame",
           "learnUrl": "https://git-scm.com/docs/git-tag",
           "parserType": "filePath",
           "parserOptions": {
@@ -292,7 +293,7 @@
           "viewName": "Username",
           "type": "string",
           "required": true,
-          "description": "Username - equivalent to git config user.name",
+          "description": "For use with \"git config user.name\"",
           "placeholder": "myusername",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
@@ -301,25 +302,25 @@
           "viewName": "Email",
           "type": "string",
           "required": true,
-          "description": "Email - equivalent to git config user.email",
+          "description": "For use with \"git config user.email\"",
           "placeholder": "my@email.com",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
           "name": "tagName",
-          "viewName": "Tag Name",
+          "viewName": "Tag",
           "type": "string",
           "required": true,
-          "description": "Tag name - should be of format v1.2.3",
+          "description": "Usually following Semantic Versioning format, e.g. \"v1.2.3\"",
           "learnUrl": "https://git-scm.com/docs/git-tag",
-          "placeholder": "v1.0.2135"
+          "placeholder": "v0.0.0"
         },
         {
           "name": "message",
           "viewName": "Tag Message",
           "type": "string",
           "required": false,
-          "description": "Description for tag",
+          "description": "Optional tagging message for annotated tag",
           "placeholder": "20220409 Release v0.1 - Hungry Horse",
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
@@ -350,8 +351,8 @@
           "viewName": "Repository Path",
           "type": "string",
           "required": true,
-          "description": "Path of the existing git repository in which to \"git commit\"",
-          "placeholder": "myrepo_develop",
+          "description": "Path of an existing git repository on Kaholo Agent in which to \"git commit\"",
+          "placeholder": "reponame",
           "learnUrl": "https://git-scm.com/docs/git-commit",
           "parserType": "filePath",
           "parserOptions": {
@@ -366,7 +367,7 @@
           "viewName": "Username",
           "type": "string",
           "required": true,
-          "description": "Username - equivalent to git config user.name",
+          "description": "For use with \"git config user.name\"",
           "placeholder": "myusername",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
@@ -375,7 +376,7 @@
           "viewName": "Email",
           "type": "string",
           "required": true,
-          "description": "Email - equivalent to git config user.email",
+          "description": "For use with \"git config user.email\"",
           "placeholder": "my@email.com",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
@@ -384,17 +385,17 @@
           "viewName": "Commit Message",
           "type": "string",
           "required": true,
-          "description": "The message for the commit",
+          "description": "A commit message explaining the changes made",
           "placeholder": "This_is_version_5",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
           "name": "override",
-          "viewName": "Override Add Argumants",
+          "viewName": "Additional Arguments",
           "type": "text",
           "parserType": "array",
           "required": false,
-          "description": "Add arguments to the commit command.",
+          "description": "Optional additional arguments for the git command, one per line.",
           "placeholder": "-a\n--interactive\n--patch",
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
@@ -432,7 +433,7 @@
           "name": "workingDirectory",
           "viewName": "Working Directory",
           "type": "string",
-          "description": "Path to the directory which will be set as the working directory during the execution of the command",
+          "description": "Path to a directory on the Kaholo Agent, set as working directory for the execution of the command",
           "parserType": "filePath",
           "parserOptions": {
             "throwIfDoesntExist": true,
@@ -445,14 +446,14 @@
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
-          "description": "SSH Key to temporarily write on the agent. The SSH Key file path will be exposed as KAHOLO_GIT_SSH_KEY_PATH shell environmental variable in the command.",
+          "description": "An optional SSH Key file to be exposed as environment variable $KAHOLO_GIT_SSH_KEY_PATH for use in the command, and securely deleted after execution.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
         {
           "name": "password",
           "viewName": "Password",
           "type": "vault",
-          "description": "Password or Token for authentication. It'll be exposed as KAHOLO_GIT_PASSWORD shell environmental variable in the command."
+          "description": "An optional password or token to be exposed as environment variable $KAHOLO_GIT_PASSWORD for use in the command."
         }
       ]
     }
