@@ -22,6 +22,13 @@ async function execCommand(command, opts = {}) {
   });
 }
 
+function omitNil(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== null && value !== undefined),
+  );
+}
+
 module.exports = {
   execCommand,
+  omitNil,
 };

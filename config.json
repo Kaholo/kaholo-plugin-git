@@ -179,7 +179,14 @@
           "required": true,
           "description": "Path of the existing git repository to \"git pull\"",
           "placeholder": "/home/username/reponame/",
-          "learnUrl": "https://git-scm.com/docs/git-pull"
+          "learnUrl": "https://git-scm.com/docs/git-pull",
+          "parserType": "filePath",
+          "parserOptions": {
+            "throwIfDoesntExist": true,
+            "acceptedTypes": [
+              "directory"
+            ]
+          }
         },
         {
           "name": "force",
@@ -209,17 +216,61 @@
       ]
     },
     {
-      "name": "pushTag",
-      "viewName": "Push Tag",
+      "name": "push",
+      "viewName": "Push",
       "params": [
+        {
+          "name": "repository",
+          "viewName": "Repository Path",
+          "type": "string",
+          "required": true,
+          "description": "Path of the existing git repository to \"git push\"",
+          "placeholder": "/home/username/path/",
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "parserType": "filePath",
+          "parserOptions": {
+            "throwIfDoesntExist": true,
+            "acceptedTypes": [
+              "directory"
+            ]
+          }
+        },
+        {
+          "name": "remote",
+          "viewName": "Remote",
+          "description": "Name of the remote repository to push to.",
+          "type": "string",
+          "required": true,
+          "default": "origin"
+        },
+        {
+          "name": "branch",
+          "viewName": "Branch",
+          "description": "Name of the branch to push. If left empty, the checked out branch is pushed.",
+          "type": "string"
+        },
         {
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
-          "required": false,
           "description": "SSH key to use for authentication, if not username and password",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         },
+        {
+          "name": "extraArgs",
+          "viewName": "Additional Arguments",
+          "type": "text",
+          "parserType": "array",
+          "description": "Optional additional arguments for the git command, one per line.",
+          "placeholder": "--quiet",
+          "learnUrl": "https://git-scm.com/docs/git-push"
+        }
+      ]
+    },
+    {
+      "name": "tag",
+      "viewName": "Tag",
+      "params": [
         {
           "name": "path",
           "viewName": "Repository Path",
@@ -227,7 +278,14 @@
           "required": true,
           "description": "Path of the existing git repository to \"git tag\"",
           "placeholder": "/home/username/path/",
-          "learnUrl": "https://git-scm.com/docs/git-tag"
+          "learnUrl": "https://git-scm.com/docs/git-tag",
+          "parserType": "filePath",
+          "parserOptions": {
+            "throwIfDoesntExist": true,
+            "acceptedTypes": [
+              "directory"
+            ]
+          }
         },
         {
           "name": "username",
@@ -266,27 +324,27 @@
           "learnUrl": "https://git-scm.com/docs/git-tag"
         },
         {
-          "name": "push",
+          "name": "pushFlag",
           "viewName": "Push Tag to Origin",
           "type": "boolean",
           "default": true,
           "description": "Push the tag to the remote repository.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-Basics-Tagging"
-        }
-      ]
-    },
-    {
-      "name": "addCommit",
-      "viewName": "Add Commit And Push",
-      "params": [
+        },
         {
           "name": "sshKey",
           "viewName": "SSH Key",
           "type": "vault",
           "required": false,
-          "description": "SSH key to use for authentication, if not username and password",
+          "description": "SSH key to use for authentication.",
           "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
-        },
+        }
+      ]
+    },
+    {
+      "name": "commit",
+      "viewName": "Commit",
+      "params": [
         {
           "name": "path",
           "viewName": "Repository Path",
@@ -294,7 +352,14 @@
           "required": true,
           "description": "Path of the existing git repository in which to \"git commit\"",
           "placeholder": "myrepo_develop",
-          "learnUrl": "https://git-scm.com/docs/git-commit"
+          "learnUrl": "https://git-scm.com/docs/git-commit",
+          "parserType": "filePath",
+          "parserOptions": {
+            "throwIfDoesntExist": true,
+            "acceptedTypes": [
+              "directory"
+            ]
+          }
         },
         {
           "name": "username",
@@ -334,27 +399,60 @@
           "learnUrl": "https://git-scm.com/docs/git-commit"
         },
         {
-          "name": "push",
+          "name": "pushFlag",
           "viewName": "Push Commit to Origin",
           "type": "boolean",
           "default": true,
           "description": "Push the local commit to the remote repository.",
           "learnUrl": "https://git-scm.com/docs/git-push"
+        },
+        {
+          "name": "sshKey",
+          "viewName": "SSH Key",
+          "type": "vault",
+          "required": false,
+          "description": "SSH key to use for authentication.",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
         }
       ]
     },
     {
-      "name": "remove",
-      "viewName": "Remove Repository",
+      "name": "runGitCommand",
+      "viewName": "Run Git Command",
       "params": [
         {
-          "name": "path",
-          "viewName": "Repository Path",
+          "name": "command",
+          "viewName": "Command",
+          "type": "text",
+          "description": "Git command to be executed.",
+          "placeholder": "git reset --hard HEAD",
+          "required": true
+        },
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
           "type": "string",
-          "required": true,
-          "description": "Path of the directory to delete.",
-          "placeholder": "myrepo_test",
-          "learnUrl": "https://nodejs.org/api/fs.html#fsrmdirsyncpath-options"
+          "description": "Path to the directory which will be set as the working directory during the execution of the command",
+          "parserType": "filePath",
+          "parserOptions": {
+            "throwIfDoesntExist": true,
+            "acceptedTypes": [
+              "directory"
+            ]
+          }
+        },
+        {
+          "name": "sshKey",
+          "viewName": "SSH Key",
+          "type": "vault",
+          "description": "SSH Key to temporarily write on the agent. The SSH Key file path will be exposed as KAHOLO_GIT_SSH_KEY_PATH shell environmental variable in the command.",
+          "learnUrl": "https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key"
+        },
+        {
+          "name": "password",
+          "viewName": "Password",
+          "type": "vault",
+          "description": "Password or Token for authentication. It'll be exposed as KAHOLO_GIT_PASSWORD shell environmental variable in the command."
         }
       ]
     }

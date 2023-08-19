@@ -25,7 +25,7 @@ function provideSshPrivateKeyPath(options) {
   let originalSshCommand;
 
   return async (params) => {
-    if (!params.sshKey) {
+    if (!params[sourceKeyName]) {
       return callback(params);
     }
 
@@ -36,7 +36,7 @@ function provideSshPrivateKeyPath(options) {
 
     if (useGlobalSshCommand) {
       originalSshCommand = await execGitCommand(["config", "--global", "--get", "core.sshCommand"]).catch(() => {}); // ignore errors
-      originalSshCommand = originalSshCommand.trim();
+      originalSshCommand = originalSshCommand?.trim();
     }
 
     // We need better API in kaholo-plugin-library for these kind of operations
