@@ -1,259 +1,199 @@
 const kaholoPluginLibrary = require("@kaholo/plugin-library");
-const {
-  basename,
-  resolve: resolvePath,
-} = require("path");
 
-const GitKey = require("./git-key");
 const {
   verifyGitVersion,
   execGitCommand,
-  getSSHCommand,
   setUsernameAndEmail,
-  tryDelete,
-  turnSshAgentUp,
-  killSshAgent,
-  isWin,
-} = require("./helpers");
+  resolveClonePath,
+} = require("./git-helpers");
+const {
+  tryDeleteDirectoryRecursively,
+} = require("./fs-helpers");
+const {
+  startSshAgent,
+  tryKillSshAgent,
+} = require("./ssh-helpers");
 
-async function cloneUsingSsh(params) {
-  await verifyGitVersion();
+const {
+  prepareGitArgsForClonePrivateRepository,
+  prepareGitArgsForClonePublicRepository,
+  validateParamsForPublicClone,
+  validateParamsForPrivateClone,
+  prepareGitArgsForPull,
+  provideSshPrivateKeyPath,
+  validateParamsForPushTag,
+  prepareGitArgsForPushTag,
+  prepareGitArgsForAddCommitAndPush,
+} = require("./preparation-functions");
+const { execCommand, omitNil } = require("./helpers");
 
+async function clonePrivateRepository(params) {
   const {
+    overwrite,
     path,
     repo,
-    branch,
-    overwrite,
-    sshKey,
-    extraArgs,
-    saveCreds,
-    username,
-    password,
   } = params;
 
-  // validate parameters
-  let validRepoUrl = repo;
-  if (repo.startsWith("https://")) {
-    if (!username || !password) {
-      throw new Error("Both username and password are required parameters for private repository URLs in HTTPS format.");
-    }
-    validRepoUrl = `https://${username}:${password}@${repo.slice(8)}`;
-  } else {
-    if (username || password) {
-      console.error("Parameters Username and Password are needed only for repository URLs in HTTPS format.");
-    }
-    if (!sshKey) {
-      throw new Error("SSH key is required for repository URLs NOT in HTTPS format.");
-    }
-  }
+  await verifyGitVersion();
+  const { repoUrl } = validateParamsForPrivateClone(params);
+  const clonePath = resolveClonePath(path, repo);
 
-  const repoDirectoryName = path ? basename(path) : basename(repo).replace(/\.git$/, "");
-  const resolvedPath = resolvePath(path ?? repoDirectoryName);
-
-  // delete directory if already exists
   if (overwrite) {
-    await tryDelete(resolvedPath);
+    await tryDeleteDirectoryRecursively(clonePath);
   }
 
-  const args = ["clone", validRepoUrl];
-  if (branch) {
-    args.push("-b", branch);
-  }
+  const gitArgs = prepareGitArgsForClonePrivateRepository({
+    ...params,
+    repoUrl,
+    clonePath,
+  });
 
-  let gitKey = null;
-  if (sshKey && !(username && password)) { // if provided ssh Key and not username and password
-    const [newGitKey, sshCmd] = await getSSHCommand(sshKey, saveCreds);
-    gitKey = newGitKey;
-    args.push("--config");
-    args.push(`core.sshCommand="${sshCmd}"`);
-  }
-  if (extraArgs) {
-    args.push(...extraArgs);
-  }
-  args.push(resolvedPath);
-
-  // clone using key file
-  let didTurnAgentUp = false;
   try {
-    if (gitKey) {
-      didTurnAgentUp = await turnSshAgentUp(gitKey);
-    }
-    // run clone
-    const cloneResult = await execGitCommand(args);
-    return cloneResult;
+    await startSshAgent();
+    return await execGitCommand(gitArgs);
   } finally {
-    if (didTurnAgentUp) {
-      await killSshAgent();
-    }
-    if (sshKey && gitKey) {
-      await gitKey.dispose();
-    }
+    await tryKillSshAgent();
   }
 }
 
 async function clonePublic(params) {
-  await verifyGitVersion();
-
   const {
     path,
     repo,
-    branch,
     overwrite,
-    extraArgs,
   } = params;
 
-  const repoDirectoryName = path ? basename(path) : basename(repo).replace(/\.git$/, "");
-  const resolvedPath = resolvePath(path ?? repoDirectoryName);
-
-  if (!repo.startsWith("https://")) {
-    throw new Error("Please use HTTPS format URL for public repositories. Anonymous SSH is not supported in method \"Clone public repository\".");
-  }
+  await verifyGitVersion();
+  validateParamsForPublicClone(params);
+  const clonePath = resolveClonePath(path, repo);
 
   if (overwrite) {
-    await tryDelete(resolvedPath);
+    await tryDeleteDirectoryRecursively(clonePath);
   }
 
-  const args = ["clone", repo];
-  if (branch) {
-    args.push("-b", branch);
-  }
-  if (extraArgs) {
-    args.push(...extraArgs);
-  }
-  args.push(resolvedPath);
+  const args = prepareGitArgsForClonePublicRepository({
+    ...params,
+    clonePath,
+  });
 
   return execGitCommand(args);
 }
 
 async function pull(params) {
-  const {
-    path,
-    force,
-    commitMerge,
-    extraArgs,
-  } = params;
+  const { path } = params;
 
-  const didTurnAgentUp = isWin ? false : await turnSshAgentUp(await GitKey.fromRepoFolder(path));
-
-  const args = ["pull"];
-  if (force) {
-    args.push("-f");
-  }
-  args.push(`--${commitMerge ? "" : "no-"}commit`);
-  args.push(...extraArgs);
+  const args = prepareGitArgsForPull(params);
 
   try {
-    return execGitCommand(args, path);
+    await startSshAgent();
+    return await execGitCommand(args, path.absolutePath);
   } finally {
-    if (didTurnAgentUp) {
-      await killSshAgent();
-    }
+    await tryKillSshAgent();
   }
 }
 
-async function pushTag(params) {
+async function tag(params) {
   const {
     path,
     tagName,
     message,
-    push,
+    pushFlag,
     username,
     email,
   } = params;
 
-  if (/\s/g.test(tagName)) {
-    throw new Error("Tag name cannot have spaces and should be a version number such as \"v2.1.0\".");
-  }
-
-  await setUsernameAndEmail(username, email, path);
-
-  let didTurnAgentUp = false;
-  if (push && !isWin) {
-    didTurnAgentUp = await turnSshAgentUp(await GitKey.fromRepoFolder(path));
-  }
-
-  const tagArgs = ["tag"];
-  if (message) {
-    tagArgs.push("-a", tagName, "-m", `"${message}"`);
-  } else {
-    // light-weight(lw) tag
-    tagArgs.push(tagName);
-  }
+  validateParamsForPushTag(tagName);
+  await setUsernameAndEmail(username, email, path.absolutePath);
+  const tagArgs = prepareGitArgsForPushTag(message, tagName);
 
   const results = {};
   try {
-    results.tag = await execGitCommand(tagArgs, path);
-    if (push) {
-      results.push = await execGitCommand(["push origin", tagName], path);
+    results.tag = await execGitCommand(tagArgs, path.absolutePath);
+    if (pushFlag) {
+      results.push = await push({
+        repository: path,
+        remote: "origin",
+        branch: tagName,
+      });
     }
+
     return results;
   } catch (err) {
     throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`);
-  } finally {
-    if (didTurnAgentUp) {
-      await killSshAgent();
-    }
   }
 }
 
-async function addCommit(params) {
+async function commit(params) {
   const {
     path,
     commitMessage,
     username,
     email,
-    push,
+    pushFlag,
     overrideAdd,
   } = params;
 
-  await setUsernameAndEmail(username, email, path);
-
-  let didTurnAgentUp = false;
-  if (push && !isWin) {
-    const gitKey = await GitKey.fromRepoFolder(path);
-    if (!gitKey || !gitKey.keyPath) {
-      throw new Error("Couldn't load ssh Key!");
-    }
-    didTurnAgentUp = await turnSshAgentUp(gitKey);
-  }
-
-  const addArgs = ["add"];
-  const commitArgs = [`commit -a -m "${commitMessage}"`];
-  if (overrideAdd?.length > 0) {
-    addArgs.push(...overrideAdd);
-  } else {
-    addArgs.push("-A");
-  }
+  await setUsernameAndEmail(username, email, path.absolutePath);
+  const { addArgs, commitArgs } = prepareGitArgsForAddCommitAndPush(commitMessage, overrideAdd);
 
   const results = {};
   try {
-    results.add = await execGitCommand(addArgs, path);
-    results.commit = await execGitCommand(commitArgs, path);
-    if (push) {
-      results.push = await execGitCommand(["push origin"], path);
+    results.add = await execGitCommand(addArgs, path.absolutePath);
+    results.commit = await execGitCommand(commitArgs, path.absolutePath);
+    if (pushFlag) {
+      results.push = await push({
+        repository: path,
+        remote: "origin",
+      });
     }
+
     return results;
   } catch (err) {
     throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`);
-  } finally {
-    if (didTurnAgentUp) {
-      await killSshAgent();
-    }
   }
 }
 
-async function remove(params) {
-  const { path } = params;
+async function push(params) {
+  const {
+    repository,
+    extraArgs = [],
+    remote = "origin",
+    branch,
+  } = params;
 
-  await tryDelete(path);
-  return "Success";
+  const commandArgs = ["push", remote, branch, ...extraArgs];
+
+  try {
+    await startSshAgent();
+    return await execGitCommand(commandArgs, repository.absolutePath);
+  } finally {
+    await tryKillSshAgent();
+  }
+}
+
+async function runGitCommand(params) {
+  const {
+    sshPrivateKeyPath,
+    password,
+    command,
+    workingDirectory = kaholoPluginLibrary.helpers.analyzePath("./"),
+  } = params;
+
+  return execCommand(command, {
+    env: omitNil({
+      KAHOLO_GIT_PASSWORD: password,
+      KAHOLO_GIT_SSH_KEY_PATH: sshPrivateKeyPath,
+    }),
+    cwd: workingDirectory.absolutePath,
+  });
 }
 
 module.exports = kaholoPluginLibrary.bootstrap({
-  cloneUsingSsh,
+  cloneUsingSsh: provideSshPrivateKeyPath({ callback: clonePrivateRepository }),
   clonePublic,
-  pull,
-  pushTag,
-  addCommit,
-  remove,
+  push: provideSshPrivateKeyPath({ callback: push }),
+  pull: provideSshPrivateKeyPath({ callback: pull }),
+  tag: provideSshPrivateKeyPath({ callback: tag }),
+  commit: provideSshPrivateKeyPath({ callback: commit }),
+  runGitCommand: provideSshPrivateKeyPath({ callback: runGitCommand }),
 });
