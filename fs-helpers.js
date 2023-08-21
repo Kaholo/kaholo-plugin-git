@@ -28,7 +28,7 @@ async function tryDeleteDirectoryRecursively(pathString) {
 
 async function shredFile(filePath) {
   const shredFilePathInfo = await kaholoPluginLibrary.helpers.analyzePath(filePath);
-  if (!shredFilePathInfo.exists || !shredFilePathInfo.type === "file") {
+  if (!shredFilePathInfo.exists || shredFilePathInfo.type !== "file") {
     return null;
   }
 
