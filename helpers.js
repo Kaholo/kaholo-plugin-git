@@ -1,25 +1,58 @@
 const childProcess = require("child_process");
+const { promisify } = require("util");
 
-async function execCommand(command, opts = {}) {
-  const resolvedOptions = opts;
-  if (!resolvedOptions.env) {
-    resolvedOptions.env = process.env;
+async function executeCommand(params) {
+  const {
+    command,
+    onProgressFn,
+    options = {},
+  } = params;
+  if (!options.env) {
+    options.env = process.env;
   }
 
-  return new Promise((resolve, reject) => {
-    childProcess.exec(command, resolvedOptions, (error, stdout, stderr) => {
-      if (error) {
-        console.error(stdout);
-        return reject(error);
-      }
+  let childProcessError;
+  const childProcessInstance = childProcess.exec(command, options);
 
-      let newStdout = stdout;
-      if (stderr && !stdout) {
-        newStdout = `${stderr}\nSuccess!`;
-      }
-      return resolve(newStdout);
-    });
+  const outputChunks = {
+    stdout: [],
+    stderr: [],
+  };
+
+  childProcessInstance.stdout.on("data", (data) => {
+    outputChunks.stdout.push(data);
+
+    onProgressFn?.(data);
   });
+  childProcessInstance.stderr.on("data", (data) => {
+    outputChunks.stderr.push(data);
+
+    onProgressFn?.(data);
+  });
+  childProcessInstance.on("error", (error) => {
+    childProcessError = error;
+  });
+
+  try {
+    await promisify(childProcessInstance.on.bind(childProcessInstance))("close");
+  } catch (error) {
+    childProcessError = error;
+  }
+
+  if (childProcessError) {
+    throw childProcessError;
+  }
+
+  const outputObject = {
+    stdout: outputChunks.stdout.join(""),
+    stderr: outputChunks.stderr.join(""),
+  };
+
+  if (outputObject.stderr && !outputObject.stdout) {
+    outputObject.stdout = outputObject.stderr;
+  }
+
+  return outputObject.stdout;
 }
 
 function omitNil(obj) {
@@ -29,6 +62,6 @@ function omitNil(obj) {
 }
 
 module.exports = {
-  execCommand,
+  executeCommand,
   omitNil,
 };

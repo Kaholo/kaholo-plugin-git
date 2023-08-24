@@ -25,7 +25,7 @@ const {
   prepareGitArgsForPushTag,
   prepareGitArgsForAddCommitAndPush,
 } = require("./preparation-functions");
-const { execCommand, omitNil } = require("./helpers");
+const { executeCommand, omitNil } = require("./helpers");
 
 async function clonePrivateRepository(params) {
   const {
@@ -179,12 +179,16 @@ async function runGitCommand(params) {
     workingDirectory = kaholoPluginLibrary.helpers.analyzePath("./"),
   } = params;
 
-  return execCommand(command, {
-    env: omitNil({
-      KAHOLO_GIT_PASSWORD: password,
-      KAHOLO_GIT_SSH_KEY_PATH: sshPrivateKeyPath,
-    }),
-    cwd: workingDirectory.absolutePath,
+  return executeCommand({
+    command,
+    onProgressFn: (msg) => process.stdout.write(msg || ""),
+    options: {
+      env: omitNil({
+        KAHOLO_GIT_PASSWORD: password,
+        KAHOLO_GIT_SSH_KEY_PATH: sshPrivateKeyPath,
+      }),
+      cwd: workingDirectory.absolutePath,
+    },
   });
 }
 
