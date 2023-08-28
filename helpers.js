@@ -14,19 +14,10 @@ async function executeCommand(params) {
   let childProcessError;
   const childProcessInstance = childProcess.exec(command, options);
 
-  const outputChunks = {
-    stdout: [],
-    stderr: [],
-  };
-
   childProcessInstance.stdout.on("data", (data) => {
-    outputChunks.stdout.push(data);
-
     onProgressFn?.(data);
   });
   childProcessInstance.stderr.on("data", (data) => {
-    outputChunks.stderr.push(data);
-
     onProgressFn?.(data);
   });
   childProcessInstance.on("error", (error) => {
@@ -43,16 +34,7 @@ async function executeCommand(params) {
     throw childProcessError;
   }
 
-  const outputObject = {
-    stdout: outputChunks.stdout.join(""),
-    stderr: outputChunks.stderr.join(""),
-  };
-
-  if (outputObject.stderr && !outputObject.stdout) {
-    outputObject.stdout = outputObject.stderr;
-  }
-
-  return outputObject.stdout;
+  return "";
 }
 
 function omitNil(obj) {
