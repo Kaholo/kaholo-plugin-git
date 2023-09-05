@@ -4,7 +4,6 @@ const { promisify } = require("util");
 async function executeCommand(params) {
   const {
     command,
-    onProgressFn,
     options = {},
   } = params;
   if (!options.env) {
@@ -20,11 +19,11 @@ async function executeCommand(params) {
 
   childProcessInstance.stdout.on("data", (data) => {
     outputChunks.stdout.push(data);
-    onProgressFn?.(data);
+    process.stdout.write(data ?? "");
   });
   childProcessInstance.stderr.on("data", (data) => {
     outputChunks.stderr.push(data);
-    onProgressFn?.(data);
+    process.stderr.write(data ?? "");
   });
   childProcessInstance.on("error", (error) => {
     childProcessError = error;

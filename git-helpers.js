@@ -10,7 +10,6 @@ async function verifyGitVersion() {
 
   try {
     const gitResult = await executeCommand({
-      onProgressFn: (msg) => process.stdout.write(msg || ""),
       command: "git --version",
     });
     const gitVerNumArray = gitResult.split(" ")[2].trim().split(".");
@@ -29,7 +28,6 @@ async function execGitCommand(args, cwd) {
   const options = cwd ? { cwd } : {};
 
   return executeCommand({
-    onProgressFn: (msg) => process.stdout.write(msg || ""),
     command: `git ${args.join(" ")}`,
     options,
   });

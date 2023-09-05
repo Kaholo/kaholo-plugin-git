@@ -173,7 +173,6 @@ async function runGitCommand(params) {
 
   await executeCommand({
     command,
-    onProgressFn: (msg) => process.stdout.write(msg || ""),
     options: {
       env: omitNil({
         KAHOLO_GIT_PASSWORD: password,

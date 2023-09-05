@@ -34,7 +34,6 @@ async function shredFile(filePath) {
 
   console.error(`\nShredding file at ${filePath}\n`);
   return executeCommand({
-    onProgressFn: (msg) => process.stdout.write(msg || ""),
     command: `shred -n 3 -f ${filePath}`,
   });
 }
