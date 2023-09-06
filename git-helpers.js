@@ -1,7 +1,7 @@
 const compareVersions = require("compare-versions");
 const path = require("path");
 
-const { execCommand } = require("./helpers");
+const { executeCommand } = require("./helpers");
 
 const MINIMAL_GIT_VERSION_REQUIRED = "2.10.0";
 
@@ -9,7 +9,9 @@ async function verifyGitVersion() {
   let gitVersion;
 
   try {
-    const gitResult = await execCommand("git --version");
+    const gitResult = await executeCommand({
+      command: "git --version",
+    });
     const gitVerNumArray = gitResult.split(" ")[2].trim().split(".");
     gitVersion = gitVerNumArray.slice(0, 3).join(".");
   } catch (err) {
@@ -23,9 +25,12 @@ async function verifyGitVersion() {
 }
 
 async function execGitCommand(args, cwd) {
-  const opts = cwd ? { cwd } : {};
+  const options = cwd ? { cwd } : {};
 
-  return execCommand(`git ${args.join(" ")}`, opts);
+  return executeCommand({
+    command: `git ${args.join(" ")}`,
+    options,
+  });
 }
 
 async function setUsernameAndEmail(username, email, gitPath) {

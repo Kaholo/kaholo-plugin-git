@@ -89,7 +89,7 @@ function prepareGitArgsForClonePrivateRepository(params) {
     repoUrl,
   } = params;
 
-  const args = ["clone", repoUrl];
+  const args = ["clone", "--progress", repoUrl];
   if (branch) {
     args.push("-b", branch);
   }
@@ -109,7 +109,7 @@ function prepareGitArgsForClonePublicRepository(params) {
     repo,
   } = params;
 
-  const args = ["clone", repo];
+  const args = ["clone", "--progress", repo];
   if (branch) {
     args.push("-b", branch);
   }

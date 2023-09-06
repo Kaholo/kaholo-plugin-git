@@ -25,7 +25,7 @@ const {
   prepareGitArgsForPushTag,
   prepareGitArgsForAddCommitAndPush,
 } = require("./preparation-functions");
-const { execCommand, omitNil } = require("./helpers");
+const { executeCommand, omitNil } = require("./helpers");
 
 async function clonePrivateRepository(params) {
   const {
@@ -50,7 +50,8 @@ async function clonePrivateRepository(params) {
 
   try {
     await startSshAgent();
-    return await execGitCommand(gitArgs);
+    await execGitCommand(gitArgs);
+    return "";
   } finally {
     await tryKillSshAgent();
   }
@@ -76,7 +77,8 @@ async function clonePublic(params) {
     clonePath,
   });
 
-  return execGitCommand(args);
+  await execGitCommand(args);
+  return "";
 }
 
 async function pull(params) {
@@ -86,7 +88,8 @@ async function pull(params) {
 
   try {
     await startSshAgent();
-    return await execGitCommand(args, path.absolutePath);
+    await execGitCommand(args, path.absolutePath);
+    return "";
   } finally {
     await tryKillSshAgent();
   }
@@ -106,21 +109,15 @@ async function tag(params) {
   await setUsernameAndEmail(username, email, path.absolutePath);
   const tagArgs = prepareGitArgsForPushTag(message, tagName);
 
-  const results = {};
-  try {
-    results.tag = await execGitCommand(tagArgs, path.absolutePath);
-    if (pushFlag) {
-      results.push = await push({
-        repository: path,
-        remote: "origin",
-        branch: tagName,
-      });
-    }
-
-    return results;
-  } catch (err) {
-    throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`);
+  await execGitCommand(tagArgs, path.absolutePath);
+  if (pushFlag) {
+    await push({
+      repository: path,
+      remote: "origin",
+      branch: tagName,
+    });
   }
+  return "";
 }
 
 async function commit(params) {
@@ -136,21 +133,15 @@ async function commit(params) {
   await setUsernameAndEmail(username, email, path.absolutePath);
   const { addArgs, commitArgs } = prepareGitArgsForAddCommitAndPush(commitMessage, overrideAdd);
 
-  const results = {};
-  try {
-    results.add = await execGitCommand(addArgs, path.absolutePath);
-    results.commit = await execGitCommand(commitArgs, path.absolutePath);
-    if (pushFlag) {
-      results.push = await push({
-        repository: path,
-        remote: "origin",
-      });
-    }
-
-    return results;
-  } catch (err) {
-    throw new Error(`results: ${JSON.stringify(results)}, error: ${err}`);
+  await execGitCommand(addArgs, path.absolutePath);
+  await execGitCommand(commitArgs, path.absolutePath);
+  if (pushFlag) {
+    await push({
+      repository: path,
+      remote: "origin",
+    });
   }
+  return "";
 }
 
 async function push(params) {
@@ -165,7 +156,8 @@ async function push(params) {
 
   try {
     await startSshAgent();
-    return await execGitCommand(commandArgs, repository.absolutePath);
+    await execGitCommand(commandArgs, repository.absolutePath);
+    return "";
   } finally {
     await tryKillSshAgent();
   }
@@ -179,13 +171,17 @@ async function runGitCommand(params) {
     workingDirectory = kaholoPluginLibrary.helpers.analyzePath("./"),
   } = params;
 
-  return execCommand(command, {
-    env: omitNil({
-      KAHOLO_GIT_PASSWORD: password,
-      KAHOLO_GIT_SSH_KEY_PATH: sshPrivateKeyPath,
-    }),
-    cwd: workingDirectory.absolutePath,
+  await executeCommand({
+    command,
+    options: {
+      env: omitNil({
+        KAHOLO_GIT_PASSWORD: password,
+        KAHOLO_GIT_SSH_KEY_PATH: sshPrivateKeyPath,
+      }),
+      cwd: workingDirectory.absolutePath,
+    },
   });
+  return "";
 }
 
 module.exports = kaholoPluginLibrary.bootstrap({
