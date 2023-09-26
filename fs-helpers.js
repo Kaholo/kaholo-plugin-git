@@ -3,7 +3,7 @@ const path = require("path");
 const fsExtra = require("fs-extra");
 const kaholoPluginLibrary = require("@kaholo/plugin-library");
 
-const { execCommand } = require("./helpers");
+const { executeCommand } = require("./helpers");
 
 const HOME_DIRECTORY = os.homedir();
 
@@ -33,7 +33,9 @@ async function shredFile(filePath) {
   }
 
   console.error(`\nShredding file at ${filePath}\n`);
-  return execCommand(`shred -n 3 -f ${filePath}`);
+  return executeCommand({
+    command: `shred -n 3 -f ${filePath}`,
+  });
 }
 
 module.exports = {

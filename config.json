@@ -5,7 +5,7 @@
   "execProgram": "node",
   "main": "app.js",
   "imgUrl": "logo.png",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Git Distributed Version Control System",
   "category": "Source Control",
   "keywords": [
@@ -38,6 +38,7 @@
     {
       "name": "cloneUsingSsh",
       "viewName": "Clone Private Repository",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "sshKey",
@@ -112,6 +113,7 @@
     {
       "name": "clonePublic",
       "viewName": "Clone Public Repository",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "repo",
@@ -163,6 +165,7 @@
     {
       "name": "pull",
       "viewName": "Pull",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "sshKey",
@@ -219,6 +222,7 @@
     {
       "name": "push",
       "viewName": "Push",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "repository",
@@ -271,6 +275,7 @@
     {
       "name": "tag",
       "viewName": "Tag",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "path",
@@ -345,6 +350,7 @@
     {
       "name": "commit",
       "viewName": "Commit",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "path",
@@ -420,6 +426,7 @@
     {
       "name": "runGitCommand",
       "viewName": "Run Git Command",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "command",
